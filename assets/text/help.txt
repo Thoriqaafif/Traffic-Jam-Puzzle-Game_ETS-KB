@@ -1,0 +1,11 @@
+The game board consists of a 6x6 grid, and there are several blocks placed on the board
+in different positions.
+The red block is the one you need to move out of the board, and it is placed in a horizontal
+position at the center of the board.
+The other blocks are placed in either a horizontal or vertical position, and they are
+f different sizes.
+To move a block, you can only slide it in a horizontal or vertical direction.
+You cannot rotate or lift a block off the board.
+Your objective is to slide the blocks in a way that you can move the red block out of the 
+board by sliding it through the exit at the right side of the board.To win the game, you
+need to move the red block out of the board in the fewest number of moves possible.
