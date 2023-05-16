@@ -1,11 +1,14 @@
-The game board consists of a 6x6 grid, and there are several blocks placed on the board
-in different positions.
-The red block is the one you need to move out of the board, and it is placed in a horizontal
-position at the center of the board.
-The other blocks are placed in either a horizontal or vertical position, and they are
-f different sizes.
-To move a block, you can only slide it in a horizontal or vertical direction.
-You cannot rotate or lift a block off the board.
-Your objective is to slide the blocks in a way that you can move the red block out of the 
-board by sliding it through the exit at the right side of the board.To win the game, you
-need to move the red block out of the board in the fewest number of moves possible.
+puzzle consists of a 6 × 6 grid with 
+several brown blocks, and one red block 
+inside the grid. Each (brown and red) 
+block occupies either two or three adjacent 
+grid spaces. In addition, the blocks must be 
+placed either vertically or horizontally. 
+The red block is always horizontally placed 
+in the third row. A block can only be moved 
+up and down if placed vertically and only 
+left and right if placed horizontally, and 
+it cannot be moved into an already occupied 
+space. The goal of the game is to move the 
+blocks in such a way that the red block can 
+exit the grid

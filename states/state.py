@@ -5,6 +5,7 @@ class State():
 
     def render(self, surface):
         pass
+
     def get_events(self):
         pass
 
