@@ -1,6 +1,7 @@
 import os, time, pygame
 # Load our scenes
 from states.title import Title
+from tkinter import messagebox
 
 class Game():
         def __init__(self):
@@ -9,6 +10,10 @@ class Game():
             self.SCREEN_WIDTH,self.SCREEN_HEIGHT = 960, 540
             self.game_canvas = pygame.Surface((self.GAME_W,self.GAME_H))
             self.screen = pygame.display.set_mode((self.SCREEN_WIDTH,self.SCREEN_HEIGHT))
+            # set icon and caption
+            pygame.display.set_caption("Traffic Jam Puzzle")
+            icon=pygame.image.load("assets/icon.png")
+            pygame.display.set_icon(icon)
             self.running, self.playing = True, True
             self.actions = {"left": False, "right": False, "up" : False, "down" : False, "action1" : False, "action2" : False, "start" : False}
             self.dt, self.prev_time = 0, 0
@@ -23,8 +28,10 @@ class Game():
                 self.render()
 
         def stop(self):
-            self.playing = False
-            self.running = False
+            stop=messagebox.askyesno('Quit','Do you want to quit?')
+            if stop:
+                self.playing = False
+                self.running = False
 
         def back(self):
             self.state_stack.pop()
@@ -57,7 +64,7 @@ class Game():
             self.font_dir = dict()
             self.font = dict()
             self.font_dir["head"] = os.path.join(self.assets_dir, "font")
-            self.font["head"]= pygame.font.Font(os.path.join(self.font_dir["head"], "RobotoMono-VariableFont_wght.ttf"), 50)
+            self.font["head"]= pygame.font.Font(os.path.join(self.font_dir["head"], "PressStart2P-vaV7.ttf"), 30)
             self.font_dir["text"] = os.path.join(self.assets_dir, "font")
             self.font["text"]= pygame.font.Font(os.path.join(self.font_dir["text"], "PressStart2P-vaV7.ttf"), 10)
 
