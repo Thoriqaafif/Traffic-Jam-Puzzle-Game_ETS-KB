@@ -15,9 +15,11 @@ class Game():
             icon=pygame.image.load("assets/icon.png")
             pygame.display.set_icon(icon)
             self.running, self.playing = True, True
-            self.actions = {"left": False, "right": False, "up" : False, "down" : False, "action1" : False, "action2" : False, "start" : False}
+            # self.actions = {"left": False, "right": False, "up" : False, "down" : False, "action1" : False, "action2" : False, "start" : False}
             self.dt, self.prev_time = 0, 0
             self.state_stack = []
+            self.level=0        #current level
+            self.numlevel=0     #current number of level
             self.load_assets()
             self.load_states()
 
