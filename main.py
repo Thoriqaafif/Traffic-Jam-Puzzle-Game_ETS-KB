@@ -1,4 +1,6 @@
-import os, time, pygame
+import os
+import time
+import pygame
 # Load our scenes
 import game
 

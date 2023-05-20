@@ -1,6 +1,7 @@
 import pygame
 from states.state import State
 from states.help import Help
+from states.level import Level
 
 class Menu(State):
     def __init__(self, game):
@@ -16,8 +17,12 @@ class Menu(State):
             if event.type == pygame.QUIT:
                 self.game.stop()
             if event.type == pygame.MOUSEBUTTONDOWN:
+                # go to play
+                if width/2-75 <= self.mouse[0] <= width/2+75 and height/2-100 <= self.mouse[1] <= height/2-50:
+                    new_state = Level(self.game)
+                    new_state.enter_state()
                 # go to help state
-                if width/2-75 <= self.mouse[0] <= width/2+75 and height/2 <= self.mouse[1] <= height/2+50:
+                elif width/2-75 <= self.mouse[0] <= width/2+75 and height/2 <= self.mouse[1] <= height/2+50:
                     new_state = Help(self.game)
                     new_state.enter_state()
                 # quit game
