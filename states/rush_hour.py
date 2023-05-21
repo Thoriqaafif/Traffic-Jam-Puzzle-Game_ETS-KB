@@ -17,47 +17,40 @@ miny = (600-surfaceSize)/2+50   # y-coordinates starts of game box
 class Rectangle:  # rectangle class (the car)
 
     def __init__(self, orientation, size, row, column):
-        perSq = 70  # one square is 80x80
-        self.startX = column * perSq + minx  # starting x-coordinate
-        self.startY = row * perSq + miny # starting y-coordinate
+        perSq = 70 #one square is 80x80
+        self.startX = column * perSq #starting x-coordinate
+        self.startY = row * perSq #starting y-coordinate
         self.orientation = orientation
         self.size = size
-
-        if self.orientation == "h":  # for horizontal cars
+        
+        if self.orientation == "h": #for horizontal cars
             length = perSq * size
-            self.extendX = length  # How much the x-coordinate extends by
-            self.extendY = perSq  # How much the y-coordinate extends by
+            self.extendX = length #How much the x-coordinate extends by
+            self.extendY = perSq #How much the y-coordinate extends by
             self.colour = (0, 255, 0)
-            self.startLimitX = minx  # Starting x coordinate of where the car can be positioned
-            # Starting y coordinate of where the car can be positioned
-            self.startLimitY = self.startY
-            # Ending x coordinate of where the car can be positioned
-            self.endLimitX = surfaceSize - length + perSq
-            # Ending y coordinate of where the car can be positioned
-            self.endLimitY = self.startY + self.extendY
-
-        else:  # same as above, but for vertical, so swap x and y
+            self.startLimitX = 0 #Starting x coordinate of where the car can be positioned
+            self.startLimitY = self.startY #Starting y coordinate of where the car can be positioned
+            self.endLimitX = surfaceSize - length + perSq #Ending x coordinate of where the car can be positioned
+            self.endLimitY = self.startY + self.extendY #Ending x coordinate of where the car can be positioned
+            
+        else: #same as above, but for vertical, so swap x and y
             length = perSq * size
             self.extendX = perSq
             self.extendY = length
             self.colour = (0, 0, 255)
             self.startLimitX = self.startX
-            self.startLimitY = miny
+            self.startLimitY = 0
             self.endLimitX = self.startX + self.extendX
             self.endLimitY = surfaceSize - length + perSq
 
-        # if it is the first car (car needed to get across)
-        if row == 2 and orientation == "h":
-            # make it its own different colour to differentiate
-            self.colour = (255, 0, 0)
+        if row == 2 and column == 0: #if it is the first car (car needed to get across)
+            self.colour = (204, 0, 0) #make it its own different colour to differentiate
 
-        self.currentX = self.startX + 0  # current x-coordinate of car
-        self.currentY = self.startY + 0  # current y-coordinate of car
+        self.currentX = self.startX + 0 #current x-coordinate of car
+        self.currentY = self.startY + 0 #current y-coordinate of car
 
-        self.rectDrag = False  # boolean if the car is currently being dragged or not
-        # make rectangle object
-        self.rect = pygame.Rect(self.startX, self.startY,
-                                self.extendX, self.extendY)
+        self.rectDrag = False #boolean if the car is currently being dragged or not
+        self.rect = pygame.Rect(self.startX, self.startY, self.extendX, self.extendY) #make rectangle object
 
 
 class RushHour(State):  # main game class
@@ -155,18 +148,27 @@ class RushHour(State):  # main game class
         white=(250,250,250)
         pygame.draw.rect(surface,white,pygame.Rect(minx,miny,surfaceSize,surfaceSize))
         for x in range(len(self.rectObjects)):  # for each rectangle
-                surface.blit(self.game.car,[self.rectObjects[x].rect.x,self.rectObjects[x].rect.y])
+                # surface.blit(self.game.car,[self.rectObjects[x].rect.x,self.rectObjects[x].rect.y])
                 # colour fill the rectangles
-                # surface.fill(
-                #     self.rectObjects[x].colour, self.rectObjects[x].rect)
+                startX = self.rectObjects[x].rect.x+minx
+                startY = self.rectObjects[x].rect.y+miny
+                w = self.rectObjects[x].rect.width
+                h = self.rectObjects[x].rect.height
+                surface.fill(
+                    self.rectObjects[x].colour, pygame.Rect(startX,startY,w,h))
                 # draw rectangles, with black borders
                 pygame.draw.rect(surface, (0, 0, 0),
-                                 self.rectObjects[x].rect, 5)
+                                 pygame.Rect(startX,startY,w,h), 5)
 
     def clickObject(self):  # when the window is clicked
         for x in range(len(self.rectObjects)):  # for every object
+            startX = self.rectObjects[x].rect.x+minx
+            startY = self.rectObjects[x].rect.y+miny
+            w = self.rectObjects[x].rect.width
+            h = self.rectObjects[x].rect.height
+            objectRect=pygame.Rect(startX,startY,w,h)
             # if the coordinates of the click is within a rectangle
-            if self.rectObjects[x].rect.collidepoint(self.ev.pos):
+            if objectRect.collidepoint(self.ev.pos):
                 self.rectObjects[x].rectDrag = True  # make it be in the air
                 self.mouseX, self.mouseY = self.ev.pos  # get current mouse position
                 # get different between mouse and rectangle coordinates
@@ -183,99 +185,87 @@ class RushHour(State):  # main game class
                 self.rectObjects[x].rect.y = self.mouseY + self.offsetY
 
     def unclickObject(self):  # when the rectangle is let go
-        for x in range(len(self.rectObjects)):  # for each rectangle
-            if self.rectObjects[x].rectDrag:  # if the rectangle is in the air
+        for x in range(len(self.rectObjects)): #for each rectangle
+            if self.rectObjects[x].rectDrag: #if the rectangle is in the air
 
-                perSq = 70  # one square is 70x70
-                # get the 'row and column' of where the rectangle is
-                makeshiftColumn, makeshiftRow = self.rectObjects[x].rect.x / \
-                    perSq, self.rectObjects[x].rect.y / perSq
+                perSq = 70 #one square is 80x80
+                #get the 'row and column' of where the rectangle is
+                makeshiftColumn, makeshiftRow = self.rectObjects[x].rect.x / perSq, self.rectObjects[x].rect.y / perSq
                 decimalColumn, decimalRow = makeshiftColumn % 1, makeshiftRow % 1
 
-                # depending on decimal part, whether to round up or round down
-                # math.ceil will get rid of decimal part and round up
-                # math.floor will get rid of decimal part and round down
+                #depending on decimal part, whether to round up or round down
+                #math.ceil will get rid of decimal part and round up
+                #math.floor will get rid of decimal part and round down
                 if decimalColumn >= 0.5:
                     jumpX = math.ceil(makeshiftColumn) * perSq
                 else:
-                    jumpX = math.floor(makeshiftColumn) * perSq
+                    jumpX = math.floor(makeshiftColumn) * perSq   
                 if decimalRow >= 0.5:
                     jumpY = math.ceil(makeshiftRow) * perSq
                 else:
                     jumpY = math.floor(makeshiftRow) * perSq
-                # jump is the proposed coordinate following multiples of 80
-                # say the midair x-coordinate is something like 146, the jumpX will be 160
+                #jump is the proposed coordinate following multiples of 80
+                #say the midair x-coordinate is something like 146, the jumpX will be 160
 
-                # make a temporary list without the rectangle being held for rectangle comparison
+                #make a temporary list without the rectangle being held for rectangle comparison
                 temporaryRectangles = self.rectObjects * 1
                 temporaryRectangles.remove(self.rectObjects[x])
 
-                # get the coordinates in the middle of the rectangle
-                middleY = (
-                    self.rectObjects[x].startY + self.rectObjects[x].extendY + self.rectObjects[x].startY) / 2
-                middleX = (
-                    self.rectObjects[x].startX + self.rectObjects[x].extendX + self.rectObjects[x].startX) / 2
-                moveAllowed = True  # boolean for allowing the move
+                #get the coordinates in the middle of the rectangle
+                middleY = (self.rectObjects[x].startY + self.rectObjects[x].extendY + self.rectObjects[x].startY) / 2
+                middleX = (self.rectObjects[x].startX + self.rectObjects[x].extendX + self.rectObjects[x].startX) / 2
+                moveAllowed = True #boolean for allowing the move
 
                 if self.rectObjects[x].orientation == "h":
-                    # get the starting square that is needed to be checked for collisions
-                    countStart = int(self.rectObjects[x].currentX / perSq)
-                    # get the last square that is needed to be checked for collision
-                    countEnd = int(jumpX / perSq)
-                    if countStart > countEnd:  # if start is bigger then swap
+                    countStart = int(self.rectObjects[x].currentX /perSq) #get the starting square that is needed to be checked for collisions
+                    countEnd = int(jumpX / perSq) #get the last square that is needed to be checked for collision
+                    if countStart > countEnd: #if start is bigger then swap
                         countStart, countEnd = countEnd, countStart
-
-                else:  # same but just for vertical, swap X and Y
-                    countStart = int(self.rectObjects[x].currentY / perSq)
+                    
+                else: #same but just for vertical, swap X and Y
+                    countStart = int(self.rectObjects[x].currentY /perSq)
                     countEnd = int(jumpY / perSq)
                     if countStart > countEnd:
                         countStart, countEnd = countEnd, countStart
 
-                # depending on size of car, where to check for collision
-                # okay i kind of lied about it being the 'middle', because for size 3 car
-                # it would check 1/3 and 2/3 of the rectangle
+                #depending on size of car, where to check for collision
+                #okay i kind of lied about it being the 'middle', because for size 3 car
+                #it would check 1/3 and 2/3 of the rectangle
                 if self.rectObjects[x].size == 2:
                     divisor = 2
 
                 else:
                     divisor = 3
+                
 
-                for y in range(len(temporaryRectangles)):  # for each rectangle
-                    # for each square between the move
-                    for z in range(countStart, countEnd+1):
+                for y in range(len(temporaryRectangles)): #for each rectangle
+                    for z in range(countStart, countEnd+1): #for each square between the move
                         if self.rectObjects[x].orientation == "h":
-                            # get the new middle coordinate
-                            middleX = (
-                                (z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor
-                            # for size 3 cars
-                            middleX2 = (
-                                ((z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor) * (divisor-1)
-                            # this monster if statement checks whether or not the 'middle' coordinate is between the coordinates of another rectangle or not
+                            middleX = ((z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor #get the new middle coordinate
+                            middleX2 = (((z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor) * (divisor-1) #for size 3 cars
+                            #this monster if statement checks whether or not the 'middle' coordinate is between the coordinates of another rectangle or not
                             if ((temporaryRectangles[y].startX <= middleX <= (temporaryRectangles[y].extendX + temporaryRectangles[y].startX)) or (temporaryRectangles[y].startX <= middleX2 <= (temporaryRectangles[y].extendX + temporaryRectangles[y].startX))) and (temporaryRectangles[y].startY <= middleY <= (temporaryRectangles[y].extendY + temporaryRectangles[y].startY)):
                                 moveAllowed = False
-                                # if there is a collision then it cannot move
+                                #if there is a collision then it cannot move
                                 break
                             else:
                                 moveAllowed = True
-                        else:  # for vertical, same as above, just swap X and Y
-                            middleY = (
-                                (z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor
-                            middleY2 = (
-                                ((z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor) * (divisor-1)
+                        else: #for vertical, same as above, just swap X and Y                            
+                            middleY = ((z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor
+                            middleY2 = (((z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor) * (divisor-1)
                             if (temporaryRectangles[y].startX <= middleX <= (temporaryRectangles[y].extendX + temporaryRectangles[y].startX)) and ((temporaryRectangles[y].startY <= middleY <= (temporaryRectangles[y].extendY + temporaryRectangles[y].startY)) or (temporaryRectangles[y].startY <= middleY2 <= (temporaryRectangles[y].extendY + temporaryRectangles[y].startY))):
                                 moveAllowed = False
                                 break
                             else:
                                 moveAllowed = True
-
+                                
                     if moveAllowed == False:
-                        break
-                # this semi-monster if statement checks whether the new proposed coordinates of the rectangle is within the limits or not
-                # and also checks for collision
+                            break
+                #this semi-monster if statement checks whether the new proposed coordinates of the rectangle is within the limits or not
+                #and also checks for collision
                 if (self.rectObjects[x].startLimitX <= jumpX < self.rectObjects[x].endLimitX) and (self.rectObjects[x].startLimitY <= jumpY < self.rectObjects[x].endLimitY) and moveAllowed:
-                    # update the necessary attributes of the rectangle
-                    self.rectObjects[x].rect = pygame.Rect(
-                        jumpX, jumpY, self.rectObjects[x].extendX, self.rectObjects[x].extendY)
+                    #update the necessary attributes of the rectangle
+                    self.rectObjects[x].rect = pygame.Rect(jumpX, jumpY, self.rectObjects[x].extendX, self.rectObjects[x].extendY)
                     self.rectObjects[x].currentX = jumpX
                     self.rectObjects[x].currentY = jumpY
                     self.rectObjects[x].startX = jumpX
@@ -283,14 +273,11 @@ class RushHour(State):  # main game class
                     self.rectObjects[x].rectDrag = False
                     self.turns += 1
 
-                else:  # if it doesnt match
-                    # put the rectangle back to where the user moved it from
-                    self.rectObjects[x].rect = pygame.Rect(
-                        self.rectObjects[x].currentX, self.rectObjects[x].currentY, self.rectObjects[x].extendX, self.rectObjects[x].extendY)
+                else: #if it doesnt match
+                    #put the rectangle back to where the user moved it from
+                    self.rectObjects[x].rect = pygame.Rect(self.rectObjects[x].currentX, self.rectObjects[x].currentY, self.rectObjects[x].extendX, self.rectObjects[x].extendY)
                     self.rectObjects[x].rectDrag = False
-                    # error message popup
-                    messagebox.showwarning(
-                        'Error', 'You cannot make that move.')
+                    messagebox.showwarning('Error','You cannot make that move.') #error message popup
 
     def loadGame(self, level):  # reading the file
         self.carInfos = []  # list of car information

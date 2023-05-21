@@ -8,8 +8,14 @@ g = game.Game()
 while g.running:
     g.game_loop()
 
+# rect=pygame.Rect(0,0,50,100)
+# print(rect.x)
+# print(rect.width)
+
 # pygame.init()
 # screen=pygame.display.set_mode((800,600))
+# canvas=pygame.Surface((400,300))
+# screen.blit(screen,canvas)
 
 # color=(200,0,0)
 # screen.fill(color,pygame.Rect(30,30,60,60))
