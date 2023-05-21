@@ -1,12 +1,14 @@
 import pygame
 from states.state import State
-from states.rush_hour import GenerateGame
+from states.rush_hour import RushHour
 
 class Level(State):
     def __init__(self, game):
         pygame.init()
         self.mouse = pygame.mouse.get_pos()        
         State.__init__(self, game)
+        self.padding=100
+        self.margin=100
 
     def get_events(self):
         width = self.game.SCREEN_WIDTH
@@ -16,8 +18,9 @@ class Level(State):
             if event.type == pygame.QUIT:
                 self.game.stop()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if width/2-75 <= self.mouse[0] <= width/2+75 and height/2+25 <= self.mouse[1] <= height/2+75:
-                    GenerateGame.play()
+                if self.padding-25 <= self.mouse[0] <= self.padding+25 and self.padding-25 <= self.mouse[1] <= self.padding+25:
+                    new_state=RushHour(self.game,1)
+                    new_state.enter_state()
 
     def render(self, display):
         display.fill((255,0,255))
@@ -25,7 +28,16 @@ class Level(State):
         height = self.game.SCREEN_HEIGHT
         self.mouse = pygame.mouse.get_pos()
 
-        if width/2-75 <= self.mouse[0] <= width/2+75 and height/2+25 <= self.mouse[1] <= height/2+75:
-            self.game.draw_text(display, "1", (0,200,0), width/2, height/2+50, "head")
+        if self.padding-25 <= self.mouse[0] <= self.padding+25 and self.padding-25 <= self.mouse[1] <= self.padding+25:
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+            self.game.draw_text(display, "1", (0,200,0), self.padding, self.padding, "head")
         else:
-            self.game.draw_text(display, "1", (0,0,0), width/2, height/2+50, "head")
+            pygame.mouse.set_cursor()
+            self.game.draw_text(display, "1", (0,0,0), self.padding, self.padding, "head")
+
+        if self.padding+self.margin-25 <= self.mouse[0] <= self.padding+self.margin+25 and self.padding-25 <= self.mouse[1] <= self.padding+25:
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+            self.game.draw_text(display, "2", (0,200,0), self.padding+self.margin, self.padding, "head")
+        else:
+            pygame.mouse.set_cursor()
+            self.game.draw_text(display, "2", (0,0,0), self.padding+self.margin, self.padding, "head")

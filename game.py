@@ -7,8 +7,8 @@ from tkinter import messagebox
 class Game():
         def __init__(self):
             pygame.init()
-            self.GAME_W,self.GAME_H = 960, 540
-            self.SCREEN_WIDTH,self.SCREEN_HEIGHT = 960, 540
+            self.GAME_W,self.GAME_H = 800, 600
+            self.SCREEN_WIDTH,self.SCREEN_HEIGHT = 800, 600
             self.game_canvas = pygame.Surface((self.GAME_W,self.GAME_H))
             self.screen = pygame.display.set_mode((self.SCREEN_WIDTH,self.SCREEN_HEIGHT))
             # set icon and caption
@@ -23,6 +23,7 @@ class Game():
             self.numlevel=0     #current number of level
             self.load_assets()
             self.load_states()
+            # self.newLevel()
 
         def game_loop(self):
             while self.playing:
@@ -53,12 +54,17 @@ class Game():
             self.dt = now - self.prev_time
             self.prev_time = now
 
+        # meletakkan text pada layar
         def draw_text(self, surface, text, color, x, y, type):
             text_surface = self.font[type].render(text, True, color)
             # text_surface.set_colorkey((0,0,0))
             text_rect = text_surface.get_rect()
             text_rect.center = (x, y)
             surface.blit(text_surface, text_rect)
+
+        # meletakkan gambar pada layar
+        def draw_image():
+            pass
 
         def load_assets(self):
             # Create pointers to directories 
@@ -70,6 +76,7 @@ class Game():
             self.font["head"]= pygame.font.Font(os.path.join(self.font_dir["head"], "PressStart2P-vaV7.ttf"), 30)
             self.font_dir["text"] = os.path.join(self.assets_dir, "font")
             self.font["text"]= pygame.font.Font(os.path.join(self.font_dir["text"], "PressStart2P-vaV7.ttf"), 10)
+            self.bg = pygame.image.load("./assets/background.jpeg")
 
         def load_states(self):
             self.title_screen = Title(self)
@@ -79,8 +86,15 @@ class Game():
             for action in self.actions:
                 self.actions[action] = False
             
-        def newLevel(level):
-            pass
+        def newLevel(self):
+            self.numlevel += 1
+            Generate(self.numlevel)
+
+        def search(board):
+            Generate.search(board)
+
+        def tes(self,board):
+            Generate.board_str(board)
 
 N = 6
 EMPTY_SPACE = '_'
@@ -92,10 +106,10 @@ class Generate():
 
     def __init__(self, level):
         self.get_board()
-        self.path = self.search(self.board)
+        self.path=Generate.search(self.board)
         while len(self.path) < 15:
-            self.board = self.get_board()
-            self.path = self.search(self.board)
+            self.get_board()
+            self.path=Generate.search(self.board)
         self.make_level_txt(level)
 
     def get_board(self):
@@ -159,7 +173,7 @@ class Generate():
 
         return True
 
-
+    # mendapatkan langkah selanjutnya
     def get_next_states(board):
         processed_chars_set = set([EMPTY_SPACE])
         next_states = []
@@ -188,13 +202,13 @@ class Generate():
                         max_c += delta_c
 
                     if min_r - delta_r >= 0 and min_c - delta_c >= 0 and board[min_r - delta_r][min_c - delta_c] == EMPTY_SPACE:
-                        next_state = GenerateGame.copy_board(board)
+                        next_state = Generate.copy_board(board)
                         next_state[min_r - delta_r][min_c - delta_c] = char
                         next_state[max_r][max_c] = EMPTY_SPACE
                         next_states.append(next_state)
 
                     if max_r + delta_r < N and max_c + delta_c < N and board[max_r + delta_r][max_c + delta_c] == EMPTY_SPACE:
-                        next_state = GenerateGame.copy_board(board)
+                        next_state = Generate.copy_board(board)
                         next_state[min_r][min_c] = EMPTY_SPACE
                         next_state[max_r + delta_r][max_c + delta_c] = char
                         next_states.append(next_state)
@@ -215,48 +229,48 @@ class Generate():
             else:
                 PLIES[ply] += 1
 
-            if GenerateGame.is_solved(path[-1]):
+            if Generate.is_solved(path[-1]):
                 return path
 
-            for next_state in GenerateGame.get_next_states(path[-1]):
-                if GenerateGame.board_str(next_state) not in board_hash_set:
-                    board_hash_set.add(GenerateGame.board_str(next_state))
+            for next_state in Generate.get_next_states(path[-1]):
+                if Generate.board_str(next_state) not in board_hash_set:
+                    board_hash_set.add(Generate.board_str(next_state))
                     queue.append((ply + 1, path + [next_state]))
 
         return []
 
-
-    def make_level_txt(board):  # print board to txt file
+    def make_level_txt(self, level):  # print board to txt file
         letter = ['A', '_']
         blocks = []
         for i in range(6):
-            if board[2][i] == 'A':
+            if self.board[2][i] == 'A':
                 blocks.append(['h', 2, 2, i])
                 break
 
         for i in range(6):
             length = 0
             for j in range(6):
-                if board[i][j] not in letter:
-                    if board[i][j].isupper():
-                        if board[i][j] == board[i][j + 1]:
-                            if j + 2 < 6 and board[i][j] == board[i][j + 2]:
+                if self.board[i][j] not in letter:
+                    if self.board[i][j].isupper():
+                        if self.board[i][j] == self.board[i][j + 1]:
+                            if j + 2 < 6 and self.board[i][j] == self.board[i][j + 2]:
                                 length = 3
                             else:
                                 length = 2
-                            letter.append(board[i][j])
+                            letter.append(self.board[i][j])
                             blocks.append(['h', length, i, j])
 
                     else:
-                        if board[i][j] == board[i + 1][j]:
-                            if i + 2 < 6 and board[i][j] == board[i + 2][j]:
+                        if self.board[i][j] == self.board[i + 1][j]:
+                            if i + 2 < 6 and self.board[i][j] == self.board[i + 2][j]:
                                 length = 3
                             else:
                                 length = 2
-                            letter.append(board[i][j])
+                            letter.append(self.board[i][j])
                             blocks.append(['v', length, i, j])
 
-        out = open('game0.txt', 'w')
+        strout = "./assets/level/game"+str(level)+".txt"
+        out = open(strout, 'w')
         for i in blocks:
             out.write('{}, {}, {}, {}\n'.format(i[0], i[1], i[2], i[3]))
             print(i)
@@ -264,14 +278,14 @@ class Generate():
 
     def play():
         while True:
-            board = GenerateGame.get_board()
-            path = GenerateGame.search(board)
+            board = Generate.get_board()
+            path = Generate.search(board)
             # print('Solved length: {}'.format(len(path)))
             # print(PLIES)
             if len(path) >= 15:
-                GenerateGame.make_level_txt(path[0])
+                Generate.make_level_txt(path[0])
                 # for i in path[0]:
                 #     print(i)
-                print('\n\n'.join(GenerateGame.board_str(_) for _ in path))
-                RushHour()
+                print('\n\n'.join(Generate.board_str(_) for _ in path))
+                # RushHour()
                 break

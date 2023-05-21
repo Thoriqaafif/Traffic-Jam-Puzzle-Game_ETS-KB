@@ -5,16 +5,21 @@ import sys
 import math
 from tkinter import *
 from tkinter import messagebox
+from states.state import State
 
 Tk().wm_withdraw()  # to hide the main Tkinter window
+
+surfaceSize = 420               # game surface size
+minx = (800-surfaceSize)/2      # x-coordinates starts of game box
+miny = (600-surfaceSize)/2+50   # y-coordinates starts of game box
 
 # each of block is a rectangle block
 class Rectangle:  # rectangle class (the car)
 
     def __init__(self, orientation, size, row, column):
-        perSq = 80  # one square is 80x80
-        self.startX = column * perSq  # starting x-coordinate
-        self.startY = row * perSq  # starting y-coordinate
+        perSq = 70  # one square is 80x80
+        self.startX = column * perSq + minx  # starting x-coordinate
+        self.startY = row * perSq + miny # starting y-coordinate
         self.orientation = orientation
         self.size = size
 
@@ -23,12 +28,12 @@ class Rectangle:  # rectangle class (the car)
             self.extendX = length  # How much the x-coordinate extends by
             self.extendY = perSq  # How much the y-coordinate extends by
             self.colour = (0, 255, 0)
-            self.startLimitX = 0  # Starting x coordinate of where the car can be positioned
+            self.startLimitX = minx  # Starting x coordinate of where the car can be positioned
             # Starting y coordinate of where the car can be positioned
             self.startLimitY = self.startY
             # Ending x coordinate of where the car can be positioned
-            self.endLimitX = 480 - length + 80
-            # Ending x coordinate of where the car can be positioned
+            self.endLimitX = surfaceSize - length + perSq
+            # Ending y coordinate of where the car can be positioned
             self.endLimitY = self.startY + self.extendY
 
         else:  # same as above, but for vertical, so swap x and y
@@ -37,9 +42,9 @@ class Rectangle:  # rectangle class (the car)
             self.extendY = length
             self.colour = (0, 0, 255)
             self.startLimitX = self.startX
-            self.startLimitY = 0
+            self.startLimitY = miny
             self.endLimitX = self.startX + self.extendX
-            self.endLimitY = 480 - length + 80
+            self.endLimitY = surfaceSize - length + perSq
 
         # if it is the first car (car needed to get across)
         if row == 2 and orientation == "h":
@@ -55,69 +60,107 @@ class Rectangle:  # rectangle class (the car)
                                 self.extendX, self.extendY)
 
 
-class RushHour:  # main game class
+class RushHour(State):  # main game class
 
-    def __init__(self):
+    def __init__(self,game,level):
+        State.__init__(self,game)
 
-        self.loadGame()
+        self.loadGame(level)
         self.makeRectangles()
         self.turns = 0
+        # surfaceSize = 480     # square size
+        # self.x = (960-surfaceSize)/2
+        # self.y = (540-surfaceSize)/2
 
         pygame.init()  # run pygame
-        surfaceSize = 480
-        surface = pygame.display.set_mode(
-            (surfaceSize, surfaceSize))  # make display window
+        # surface = pygame.display.set_mode(
+        #     (surfaceSize, surfaceSize))  # make display window
 
-        start = True  # if it is beginning of program
+        self.start = True  # if it is beginning of program
+        #create popup
+        # messagebox.showinfo('Welcome!', 'Rush Hour\nGet the red car to the end.\n Click and drag to control the cars.')
         self.inGame = True  # loop condition
 
-        while self.inGame:
-            self.ev = pygame.event.poll()  # pygame events
-            if self.ev.type == pygame.QUIT:  # if window exited
-                self.inGame = False
+        # while self.inGame:
+            # self.ev = pygame.event.poll()  # pygame events
+            # if self.ev.type == pygame.QUIT:  # if window exited
+            #     self.inGame = False
 
-            elif self.ev.type == pygame.MOUSEBUTTONDOWN:  # if the window has been left-clicked
-                self.clickObject()
+            # elif self.ev.type == pygame.MOUSEBUTTONDOWN:  # if the window has been left-clicked
+            #     self.clickObject()
 
-            elif self.ev.type == pygame.MOUSEBUTTONUP:  # if the window has been released from the left-click
-                self.unclickObject()
+            # elif self.ev.type == pygame.MOUSEBUTTONUP:  # if the window has been released from the left-click
+            #     self.unclickObject()
 
-            elif self.ev.type == pygame.MOUSEMOTION:  # if the lect click is still being clicked
-                self.objectMidAir()
-            # for event in pygame.event.get():
-            #     if event.type == pygame.QUIT:  # if window exited
-            #         self.inGame = False
+            # elif self.ev.type == pygame.MOUSEMOTION:  # if the lect click is still being clicked
+            #     self.objectMidAir()
+        #     # for event in pygame.event.get():
+        #     #     if event.type == pygame.QUIT:  # if window exited
+        #     #         self.inGame = False
 
-            #     elif event.type == pygame.MOUSEBUTTONDOWN:  # if the window has been left-clicked
-            #         self.clickObject()
+        #     #     elif event.type == pygame.MOUSEBUTTONDOWN:  # if the window has been left-clicked
+        #     #         self.clickObject()
 
-            #     elif event.type == pygame.MOUSEBUTTONUP:  # if the window has been released from the left-click
-            #         self.unclickObject()
+        #     #     elif event.type == pygame.MOUSEBUTTONUP:  # if the window has been released from the left-click
+        #     #         self.unclickObject()
 
-            #     elif event.type == pygame.MOUSEMOTION:  # if the lect click is still being clicked
-            #         self.objectMidAir()
+        #     #     elif event.type == pygame.MOUSEMOTION:  # if the lect click is still being clicked
+        #     #         self.objectMidAir()
 
-            surface.fill((255, 255, 255))  # make the surface white
+        #     surface.fill((255, 255, 255))  # make the surface white
 
-            for x in range(len(self.rectObjects)):  # for each rectangle
+        #     for x in range(len(self.rectObjects)):  # for each rectangle
+        #         # colour fill the rectangles
+        #         surface.fill(
+        #             self.rectObjects[x].colour, self.rectObjects[x].rect)
+        #         # draw rectangles, with black borders
+        #         pygame.draw.rect(surface, (0, 0, 0),
+        #                          self.rectObjects[x].rect, 5)
+
+        #     pygame.display.flip()  # display on window
+
+        #     if start:  # if beginning of program
+        #         # create popup
+        #         messagebox.showinfo(
+        #             'Welcome!', 'Rush Hour\nGet the red car to the end.\n Click and drag to control the cars.')
+        #         start = False
+
+        #     self.gameOver()
+
+        # pygame.quit()  # quit program
+
+    def get_events(self):
+        self.ev = pygame.event.poll()  # pygame events
+        if self.ev.type == pygame.QUIT:  # if window exited
+            self.game.stop()
+
+        elif self.ev.type == pygame.MOUSEBUTTONDOWN:  # if the window has been left-clicked
+            self.clickObject()
+
+        elif self.ev.type == pygame.MOUSEBUTTONUP:  # if the window has been released from the left-click
+            self.unclickObject()
+
+        elif self.ev.type == pygame.MOUSEMOTION:  # if the lect click is still being clicked
+            self.objectMidAir()
+
+        if (self.start):
+            messagebox.showinfo('Welcome!', 'Rush Hour\nGet the red car to the end.\n Click and drag to control the cars.')
+            self.start = False
+
+    def render(self, surface):
+        surface.fill((255, 0, 255))
+        # surfaceSize = 420     # square size
+        # self.x = (800-surfaceSize)/2
+        # self.y = (600-surfaceSize)/2
+        white=(250,250,250)
+        pygame.draw.rect(surface,white,pygame.Rect(minx,miny,surfaceSize,surfaceSize))
+        for x in range(len(self.rectObjects)):  # for each rectangle
                 # colour fill the rectangles
                 surface.fill(
                     self.rectObjects[x].colour, self.rectObjects[x].rect)
                 # draw rectangles, with black borders
                 pygame.draw.rect(surface, (0, 0, 0),
                                  self.rectObjects[x].rect, 5)
-
-            pygame.display.flip()  # display on window
-
-            if start:  # if beginning of program
-                # create popup
-                messagebox.showinfo(
-                    'Welcome!', 'Rush Hour\nGet the red car to the end.\n Click and drag to control the cars.')
-                start = False
-
-            self.gameOver()
-
-        pygame.quit()  # quit program
 
     def clickObject(self):  # when the window is clicked
         for x in range(len(self.rectObjects)):  # for every object
@@ -142,10 +185,10 @@ class RushHour:  # main game class
         for x in range(len(self.rectObjects)):  # for each rectangle
             if self.rectObjects[x].rectDrag:  # if the rectangle is in the air
 
-                perSq = 80  # one square is 80x80
+                perSq = 70  # one square is 70x70
                 # get the 'row and column' of where the rectangle is
                 makeshiftColumn, makeshiftRow = self.rectObjects[x].rect.x / \
-                    80, self.rectObjects[x].rect.y / 80
+                    perSq, self.rectObjects[x].rect.y / perSq
                 decimalColumn, decimalRow = makeshiftColumn % 1, makeshiftRow % 1
 
                 # depending on decimal part, whether to round up or round down
@@ -175,15 +218,15 @@ class RushHour:  # main game class
 
                 if self.rectObjects[x].orientation == "h":
                     # get the starting square that is needed to be checked for collisions
-                    countStart = int(self.rectObjects[x].currentX / 80)
+                    countStart = int(self.rectObjects[x].currentX / perSq)
                     # get the last square that is needed to be checked for collision
-                    countEnd = int(jumpX / 80)
+                    countEnd = int(jumpX / perSq)
                     if countStart > countEnd:  # if start is bigger then swap
                         countStart, countEnd = countEnd, countStart
 
                 else:  # same but just for vertical, swap X and Y
-                    countStart = int(self.rectObjects[x].currentY / 80)
-                    countEnd = int(jumpY / 80)
+                    countStart = int(self.rectObjects[x].currentY / perSq)
+                    countEnd = int(jumpY / perSq)
                     if countStart > countEnd:
                         countStart, countEnd = countEnd, countStart
 
@@ -248,7 +291,7 @@ class RushHour:  # main game class
                     messagebox.showwarning(
                         'Error', 'You cannot make that move.')
 
-    def loadGame(self):  # reading the file
+    def loadGame(self, level):  # reading the file
         self.carInfos = []  # list of car information
         filename = str("game0.txt")  # get 2nd file
         file = open(filename, 'r')  # open it
@@ -442,7 +485,9 @@ class GenerateGame():
                             letter.append(board[i][j])
                             blocks.append(['v', length, i, j])
 
-        out = open('game0.txt', 'w')
+        level=1
+        strout = "./assets/level/game" + str(level) + ".txt"
+        out = open(strout, 'w')
         for i in blocks:
             out.write('{}, {}, {}, {}\n'.format(i[0], i[1], i[2], i[3]))
             print(i)

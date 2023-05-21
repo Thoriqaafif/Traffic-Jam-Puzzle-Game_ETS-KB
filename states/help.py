@@ -34,6 +34,8 @@ class Help(State):
             i+=20
 
         if width/2-75 <= self.mouse[0] <= width/2+75 and height/2+175 <= self.mouse[1] <= height/2+225:
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
             self.game.draw_text(display, "Back", (0,200,0), width/2, height/2+200, "head")
         else:
+            pygame.mouse.set_cursor()
             self.game.draw_text(display, "Back", (0,0,0), width/2, height/2+200, "head")
