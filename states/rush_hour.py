@@ -155,9 +155,10 @@ class RushHour(State):  # main game class
         white=(250,250,250)
         pygame.draw.rect(surface,white,pygame.Rect(minx,miny,surfaceSize,surfaceSize))
         for x in range(len(self.rectObjects)):  # for each rectangle
+                surface.blit(self.game.car,[self.rectObjects[x].rect.x,self.rectObjects[x].rect.y])
                 # colour fill the rectangles
-                surface.fill(
-                    self.rectObjects[x].colour, self.rectObjects[x].rect)
+                # surface.fill(
+                #     self.rectObjects[x].colour, self.rectObjects[x].rect)
                 # draw rectangles, with black borders
                 pygame.draw.rect(surface, (0, 0, 0),
                                  self.rectObjects[x].rect, 5)

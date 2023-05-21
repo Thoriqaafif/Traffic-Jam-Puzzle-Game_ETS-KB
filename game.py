@@ -77,6 +77,8 @@ class Game():
             self.font_dir["text"] = os.path.join(self.assets_dir, "font")
             self.font["text"]= pygame.font.Font(os.path.join(self.font_dir["text"], "PressStart2P-vaV7.ttf"), 10)
             self.bg = pygame.image.load("./assets/background.jpeg")
+            self.car = pygame.image.load("./assets/car.png")
+            self.car = pygame.transform.scale(self.car,(70,100))
 
         def load_states(self):
             self.title_screen = Title(self)
