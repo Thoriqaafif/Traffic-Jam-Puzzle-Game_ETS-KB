@@ -159,6 +159,8 @@ class RushHour(State):  # main game class
                 # draw rectangles, with black borders
                 pygame.draw.rect(surface, (0, 0, 0),
                                  pygame.Rect(startX,startY,w,h), 5)
+                
+        self.gameOver()
 
     def clickObject(self):  # when the window is clicked
         for x in range(len(self.rectObjects)):  # for every object
@@ -301,7 +303,7 @@ class RushHour(State):  # main game class
 
     def gameOver(self):  # if game is won
         # checks if starting coordinate of first car is at the winning position or not
-        if self.rectObjects[0].startX == 320:
+        if self.rectObjects[0].startX == surfaceSize-140+minx:
             messagebox.showinfo(
                 'Congratulations!', 'You have completed the game!\nYou did it in %d moves!' % self.turns)  # victory popup
             self.inGame = False  # cut the loop
