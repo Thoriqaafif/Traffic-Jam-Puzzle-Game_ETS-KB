@@ -9,15 +9,15 @@ from states.state import State
 
 Tk().wm_withdraw()  # to hide the main Tkinter window
 
-surfaceSize = 420               # game surface size
+surfaceSize = 480               # game surface size
 minx = (800-surfaceSize)/2      # x-coordinates starts of game box
-miny = (600-surfaceSize)/2+50   # y-coordinates starts of game box
+miny = (600-surfaceSize)/2   # y-coordinates starts of game box
 
 # each of block is a rectangle block
 class Rectangle:  # rectangle class (the car)
 
     def __init__(self, orientation, size, row, column):
-        perSq = 70  # one square is 80x80
+        perSq = 80  # one square is 80x80
         self.startX = column * perSq + minx  # starting x-coordinate
         self.startY = row * perSq + miny # starting y-coordinate
         self.orientation = orientation
@@ -186,10 +186,10 @@ class RushHour(State):  # main game class
         for x in range(len(self.rectObjects)):  # for each rectangle
             if self.rectObjects[x].rectDrag:  # if the rectangle is in the air
 
-                perSq = 70  # one square is 70x70
+                perSq = 80  # one square is 70x70
                 # get the 'row and column' of where the rectangle is
-                makeshiftColumn, makeshiftRow = self.rectObjects[x].rect.x / \
-                    perSq, self.rectObjects[x].rect.y / perSq
+                makeshiftColumn, makeshiftRow = (self.rectObjects[x].rect.x - minx) / \
+                    perSq, (self.rectObjects[x].rect.y - miny) / perSq
                 decimalColumn, decimalRow = makeshiftColumn % 1, makeshiftRow % 1
 
                 # depending on decimal part, whether to round up or round down
