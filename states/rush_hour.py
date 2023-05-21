@@ -131,6 +131,7 @@ class RushHour(State):  # main game class
             self.clickObject()
 
         elif self.ev.type == pygame.MOUSEBUTTONUP:  # if the window has been released from the left-click
+            print(self.rectObjects[0].startX)
             self.unclickObject()
 
         elif self.ev.type == pygame.MOUSEMOTION:  # if the lect click is still being clicked
@@ -303,10 +304,10 @@ class RushHour(State):  # main game class
 
     def gameOver(self):  # if game is won
         # checks if starting coordinate of first car is at the winning position or not
-        if self.rectObjects[0].startX == surfaceSize-140+minx:
+        if self.rectObjects[0].startX == surfaceSize-140:
             messagebox.showinfo(
                 'Congratulations!', 'You have completed the game!\nYou did it in %d moves!' % self.turns)  # victory popup
-            self.inGame = False  # cut the loop
+            self.game.stop() # cut the loop
 
 
 N = 6
