@@ -19,7 +19,7 @@ class Game():
             # self.actions = {"left": False, "right": False, "up" : False, "down" : False, "action1" : False, "action2" : False, "start" : False}
             self.dt, self.prev_time = 0, 0
             self.state_stack = []
-            self.level=0        #current level
+            # self.level=0        #current level
             self.numlevel=0     #current number of level
             self.load_assets()
             self.load_states()
@@ -27,7 +27,7 @@ class Game():
 
         def game_loop(self):
             while self.playing:
-                self.get_dt()
+                # self.get_dt()
                 self.update()
                 self.render()
 
@@ -56,6 +56,20 @@ class Game():
 
         # meletakkan text pada layar
         def draw_text(self, surface, text, color, x, y, type):
+            # memberi border pada text bertipe head
+            if(type=="head" or type=="subhead"):
+                global text_surface
+                global text_rect
+                text_surface = self.font[type].render(text, True, (250,250,250))
+                text_rect = text_surface.get_rect()
+                text_rect.center = (x+2,y+2)
+                surface.blit(text_surface, text_rect)
+                text_rect.center = (x+2,y-2)
+                surface.blit(text_surface, text_rect)
+                text_rect.center = (x-2,y+2)
+                surface.blit(text_surface, text_rect)
+                text_rect.center = (x-2,y-2)
+                surface.blit(text_surface, text_rect)
             text_surface = self.font[type].render(text, True, color)
             # text_surface.set_colorkey((0,0,0))
             text_rect = text_surface.get_rect()
@@ -73,10 +87,12 @@ class Game():
             self.font_dir = dict()
             self.font = dict()
             self.font_dir["head"] = os.path.join(self.assets_dir, "font")
-            self.font["head"]= pygame.font.Font(os.path.join(self.font_dir["head"], "PressStart2P-vaV7.ttf"), 30)
+            self.font["head"]= pygame.font.Font(os.path.join(self.font_dir["head"], "PressStart2P-vaV7.ttf"), 40)
+            self.font_dir["subhead"] = os.path.join(self.assets_dir, "font")
+            self.font["subhead"]= pygame.font.Font(os.path.join(self.font_dir["subhead"], "PressStart2P-vaV7.ttf"), 30)
             self.font_dir["text"] = os.path.join(self.assets_dir, "font")
             self.font["text"]= pygame.font.Font(os.path.join(self.font_dir["text"], "PressStart2P-vaV7.ttf"), 10)
-            self.bg = pygame.image.load("./assets/background.jpeg")
+            self.bg = pygame.image.load("./assets/batik.png")
             self.car = pygame.image.load("./assets/car.png")
             self.car = pygame.transform.scale(self.car,(70,100))
 
@@ -276,18 +292,3 @@ class Generate():
         for i in blocks:
             out.write('{}, {}, {}, {}\n'.format(i[0], i[1], i[2], i[3]))
             print(i)
-
-
-    def play():
-        while True:
-            board = Generate.get_board()
-            path = Generate.search(board)
-            # print('Solved length: {}'.format(len(path)))
-            # print(PLIES)
-            if len(path) >= 15:
-                Generate.make_level_txt(path[0])
-                # for i in path[0]:
-                #     print(i)
-                print('\n\n'.join(Generate.board_str(_) for _ in path))
-                # RushHour()
-                break

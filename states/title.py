@@ -13,9 +13,11 @@ class Title(State):
         height = self.game.SCREEN_HEIGHT
         self.mouse = pygame.mouse.get_pos()
         for event in pygame.event.get():
+            # jika user melakukan quit game, stop game
             if event.type == pygame.QUIT:
                 self.game.stop()
             if event.type == pygame.MOUSEBUTTONDOWN:
+                # jika mouse menekan start, pindah ke menu
                 if width/2-75 <= self.mouse[0] <= width/2+75 and height/2+25 <= self.mouse[1] <= height/2+75:
                     new_state = Menu(self.game)
                     new_state.enter_state()
@@ -26,22 +28,22 @@ class Title(State):
         width = self.game.SCREEN_WIDTH
         height = self.game.SCREEN_HEIGHT
         self.mouse = pygame.mouse.get_pos()
-        self.game.draw_text(display, "Traffic Jam Puzzle", (200,200,200), width/2+3, height/2-100+3, "head")
-        self.game.draw_text(display, "Traffic Jam Puzzle", (200,200,200), width/2+3, height/2-100-3, "head")
-        self.game.draw_text(display, "Traffic Jam Puzzle", (200,200,200), width/2-3, height/2-100+3, "head")
-        self.game.draw_text(display, "Traffic Jam Puzzle", (200,200,200), width/2-3, height/2-100-3, "head")
-        self.game.draw_text(display, "Traffic Jam Puzzle", (0,0,0), width/2, height/2-100, "head")
+        pressed = False
+        startColor = (0,0,0)
+
+        # jika mouse menunjuk start, ubah warna ke hijau
         if width/2-75 <= self.mouse[0] <= width/2+75 and height/2+25 <= self.mouse[1] <= height/2+75:
+            startColor = (0,200,0)
+            pressed = True
+        else:
+            pressed = False
+
+        # jika ada tombol yang ditunjuk
+        if pressed:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-            self.game.draw_text(display, "Start", (0,0,0), width/2+2, height/2+50+2, "head")
-            self.game.draw_text(display, "Start", (0,0,0), width/2+2, height/2+50-2, "head")
-            self.game.draw_text(display, "Start", (0,0,0), width/2-2, height/2+50+2, "head")
-            self.game.draw_text(display, "Start", (0,0,0), width/2-2, height/2+50-2, "head")
-            self.game.draw_text(display, "Start", (0,200,0), width/2, height/2+50, "head")
         else:
             pygame.mouse.set_cursor()
-            self.game.draw_text(display, "Start", (200,200,200), width/2+2, height/2+50+2, "head")
-            self.game.draw_text(display, "Start", (200,200,200), width/2+2, height/2+50-2, "head")
-            self.game.draw_text(display, "Start", (200,200,200), width/2-2, height/2+50+2, "head")
-            self.game.draw_text(display, "Start", (200,200,200), width/2-2, height/2+50-2, "head")
-            self.game.draw_text(display, "Start", (0,0,0), width/2, height/2+50, "head")
+
+        # render the text
+        self.game.draw_text(display, "Traffic Jam Puzzle", (0,0,0), width/2, height/2-100, "head")
+        self.game.draw_text(display, "Start", startColor, width/2, height/2+50, "subhead")

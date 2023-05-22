@@ -19,6 +19,8 @@ class Menu(State):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # go to play
                 if width/2-75 <= self.mouse[0] <= width/2+75 and height/2-100 <= self.mouse[1] <= height/2-50:
+                    if(self.game.numlevel == 0):
+                        self.game.newLevel()
                     new_state = Level(self.game)
                     new_state.enter_state()
                 # go to help state
@@ -30,36 +32,36 @@ class Menu(State):
                     self.game.stop()
 
     def render(self, display):
-        display.fill((255,0,255))
+        # display.fill((255,0,255))
+        display.blit(self.game.bg,[0,0])
         width = self.game.SCREEN_WIDTH
         height = self.game.SCREEN_HEIGHT
         self.mouse = pygame.mouse.get_pos()
-        self.game.draw_text(display, "Main Menu", (0,0,0), width/2, height/2-200, "head")
+        pressed = False
+        playColor = (0,0,0)
+        helpColor = (0,0,0)
+        quitColor = (0,0,0)
 
         # kursor berada di tombol play
         if width/2-75 <= self.mouse[0] <= width/2+75 and height/2-100 <= self.mouse[1] <= height/2-50:
-            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-            self.game.draw_text(display, "Play", (0,200,0), width/2, height/2-75, "head")   # hijau
-            self.game.draw_text(display, "Help", (0,0,0), width/2, height/2+25, "head")
-            self.game.draw_text(display, "Quit", (0,0,0), width/2, height/2+125, "head")
-
+            playColor = (0,200,0)
+            pressed = True
         # kursor berada di tombol help
         elif width/2-75 <= self.mouse[0] <= width/2+75 and height/2 <= self.mouse[1] <= height/2+50:
-            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-            self.game.draw_text(display, "Play", (0,0,0), width/2, height/2-75, "head")
-            self.game.draw_text(display, "Help", (0,200,0), width/2, height/2+25, "head")   # hijau
-            self.game.draw_text(display, "Quit", (0,0,0), width/2, height/2+125, "head")
-
+            helpColor = (0,200,0)
+            pressed = True
         # kursor berada di tombol quit
         elif width/2-75 <= self.mouse[0] <= width/2+75 and height/2+100 <= self.mouse[1] <= height/2+150:
+            quitColor = (0,200,0)
+            pressed = True
+
+        # jika ada tombol yang ditunjuk
+        if pressed:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-            self.game.draw_text(display, "Play", (0,0,0), width/2, height/2-75, "head")
-            self.game.draw_text(display, "Help", (0,0,0), width/2, height/2+25, "head")
-            self.game.draw_text(display, "Quit", (0,200,0), width/2, height/2+125, "head")  # hijau
-        
-        # kursor tidak berada di tombol
         else:
             pygame.mouse.set_cursor()
-            self.game.draw_text(display, "Play", (0,0,0), width/2, height/2-75, "head")
-            self.game.draw_text(display, "Help", (0,0,0), width/2, height/2+25, "head")
-            self.game.draw_text(display, "Quit", (0,0,0), width/2, height/2+125, "head")
+
+        self.game.draw_text(display, "Main Menu", (0,0,0), width/2, height/2-200, "head")
+        self.game.draw_text(display, "Play", playColor, width/2, height/2-75, "subhead")
+        self.game.draw_text(display, "Help", helpColor, width/2, height/2+25, "subhead")
+        self.game.draw_text(display, "Quit", quitColor, width/2, height/2+125, "subhead")
