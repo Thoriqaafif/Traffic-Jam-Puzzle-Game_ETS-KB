@@ -66,6 +66,7 @@ class RushHour(State):  # main game class
         # surfaceSize = 480     # square size
         # self.x = (960-surfaceSize)/2
         # self.y = (540-surfaceSize)/2
+        self.path = self.loadHint(level)
 
         pygame.init()  # run pygame
         # surface = pygame.display.set_mode(
@@ -89,9 +90,12 @@ class RushHour(State):  # main game class
             # cek apakah pemain menekan back
             if 50 <= self.mouseX <= 150 and 25 <= self.mouseY <= 75:
                 self.game.back()
-            # cek apakah pemain menekan help
+            # cek apakah pemain menekan hint
             elif width-150 <= self.mouseX <= width-50 and 25 <= self.mouseY <= 75:
-                pass
+                # print(self.game)
+                for line in self.path:
+                    print(line)
+                pass # !ini
             # cek apakah pemain menggerakkan blok
             else:
                 self.clickObject()
@@ -289,6 +293,21 @@ class RushHour(State):  # main game class
             # seperate each data to its own string and add to list
             self.carInfos.append(line.split(', '))
 
+    def loadHint(self, level):  # reading the file
+        hints = []  # list of car information
+        filename = "./assets/hint/game"+str(self.game.numlevel)+".txt"  # get 2nd file
+        file = open(filename, 'r')  # open it
+        lines = file.readlines()  # save the file to a list
+
+        for x in range(len(lines)):
+            # for each line, get rid of the \n that appears at the end
+            lines[x] = lines[x][:-1]
+
+        for line in lines:
+            # seperate each data to its own string and add to list
+            hints.append(line)
+        return hints
+
     def makeRectangles(self):  # make rectangle objects
         self.rectObjects = []  # list of rectangle objects
         for each in self.carInfos:  # make obejcts
@@ -300,7 +319,7 @@ class RushHour(State):  # main game class
         if self.rectObjects[0].startX == surfaceSize-140:
             messagebox.showinfo(
                 'Congratulations!', 'You have completed the game!\nYou did it in %d moves!' % self.turns)  # victory popup
-            self.game.newLevel()    # buat level baru
+            self.path = self.game.newLevel()    # buat level baru
             self.game.back()        # pop state sekarang
             # buat state RushHour level selanjutnya
             new_state = RushHour(self.game,self.game.numlevel)

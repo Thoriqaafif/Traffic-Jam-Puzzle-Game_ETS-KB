@@ -128,7 +128,15 @@ class Generate():
         while len(self.path) < 15:
             self.get_board()
             self.path=Generate.search(self.board)
-        self.make_level_txt(level)
+            self.make_level_txt(level)
+        self.make_hint_txt(level)
+
+        # for matix in self.path:
+        #     for row in matix:
+        #         for cell in row:
+        #             print('{} '.format(cell), end='')
+        #         print()
+        #     print()
 
     def get_board(self):
         # Uppercase is horizontal, lowercase is vertical.
@@ -291,4 +299,16 @@ class Generate():
         out = open(strout, 'w')
         for i in blocks:
             out.write('{}, {}, {}, {}\n'.format(i[0], i[1], i[2], i[3]))
-            print(i)
+        #     print(i)
+        #     print()
+        out.close()
+
+    def make_hint_txt(self, level):
+        file_path = "./assets/hint/game{}.txt".format(level)
+        
+        with open(file_path, 'w') as file:
+            for board in self.path:
+                for row in board:
+                    row_str = ' '.join(['_' if cell == 0 else str(cell) for cell in row])
+                    file.write(row_str + '\n')
+                file.write('\n')  # Add an empty line between matrices

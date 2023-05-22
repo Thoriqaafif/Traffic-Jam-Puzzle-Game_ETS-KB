@@ -1,6 +1,7 @@
 import pygame
 import math
 from tkinter import messagebox
+from states.level import Rectangle
 
 class game: #main class
 
