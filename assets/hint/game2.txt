@@ -1,0 +1,196 @@
+_ _ _ _ g e
+_ _ _ _ g e
+_ A A _ g e
+_ _ b f C C
+_ _ b f D D
+_ _ b f _ _
+
+_ _ _ _ g e
+_ _ _ _ g e
+A A _ _ g e
+_ _ b f C C
+_ _ b f D D
+_ _ b f _ _
+
+_ _ _ _ g e
+_ _ _ _ g e
+A A b _ g e
+_ _ b f C C
+_ _ b f D D
+_ _ _ f _ _
+
+_ _ _ _ g e
+_ _ b _ g e
+A A b _ g e
+_ _ b f C C
+_ _ _ f D D
+_ _ _ f _ _
+
+_ _ b _ g e
+_ _ b _ g e
+A A b _ g e
+_ _ _ f C C
+_ _ _ f D D
+_ _ _ f _ _
+
+_ _ b _ g e
+_ _ b _ g e
+A A b f g e
+_ _ _ f C C
+_ _ _ f D D
+_ _ _ _ _ _
+
+_ _ b _ g e
+_ _ b f g e
+A A b f g e
+_ _ _ f C C
+_ _ _ _ D D
+_ _ _ _ _ _
+
+_ _ b f g e
+_ _ b f g e
+A A b f g e
+_ _ _ _ C C
+_ _ _ _ D D
+_ _ _ _ _ _
+
+_ _ b f g e
+_ _ b f g e
+A A b f g e
+_ _ _ C C _
+_ _ _ _ D D
+_ _ _ _ _ _
+
+_ _ b f g _
+_ _ b f g e
+A A b f g e
+_ _ _ C C e
+_ _ _ _ D D
+_ _ _ _ _ _
+
+_ _ b f g _
+_ _ b f g e
+A A b f g e
+_ _ C C _ e
+_ _ _ _ D D
+_ _ _ _ _ _
+
+_ _ b f _ _
+_ _ b f g e
+A A b f g e
+_ _ C C g e
+_ _ _ _ D D
+_ _ _ _ _ _
+
+_ _ b f _ _
+_ _ b f g e
+A A b f g e
+_ C C _ g e
+_ _ _ _ D D
+_ _ _ _ _ _
+
+_ _ b _ _ _
+_ _ b f g e
+A A b f g e
+_ C C f g e
+_ _ _ _ D D
+_ _ _ _ _ _
+
+_ _ b _ _ _
+_ _ b f g e
+A A b f g e
+C C _ f g e
+_ _ _ _ D D
+_ _ _ _ _ _
+
+_ _ _ _ _ _
+_ _ b f g e
+A A b f g e
+C C b f g e
+_ _ _ _ D D
+_ _ _ _ _ _
+
+_ _ _ _ _ _
+_ _ b f g e
+A A b f g e
+C C b f g e
+_ _ _ D D _
+_ _ _ _ _ _
+
+_ _ _ _ _ _
+_ _ b f g _
+A A b f g e
+C C b f g e
+_ _ _ D D e
+_ _ _ _ _ _
+
+_ _ _ _ _ _
+_ _ b f g _
+A A b f g _
+C C b f g e
+_ _ _ D D e
+_ _ _ _ _ e
+
+_ _ _ _ _ _
+_ _ b f g _
+A A b f g _
+C C b f g e
+_ _ D D _ e
+_ _ _ _ _ e
+
+_ _ _ _ _ _
+_ _ b f _ _
+A A b f g _
+C C b f g e
+_ _ D D g e
+_ _ _ _ _ e
+
+_ _ _ _ _ _
+_ _ b f _ _
+A A b f _ _
+C C b f g e
+_ _ D D g e
+_ _ _ _ g e
+
+_ _ _ _ _ _
+_ _ b f _ _
+A A b f _ _
+C C b f g e
+_ D D _ g e
+_ _ _ _ g e
+
+_ _ _ _ _ _
+_ _ b _ _ _
+A A b f _ _
+C C b f g e
+_ D D f g e
+_ _ _ _ g e
+
+_ _ _ _ _ _
+_ _ b _ _ _
+A A b _ _ _
+C C b f g e
+_ D D f g e
+_ _ _ f g e
+
+_ _ _ _ _ _
+_ _ b _ _ _
+A A b _ _ _
+C C b f g e
+D D _ f g e
+_ _ _ f g e
+
+_ _ _ _ _ _
+_ _ _ _ _ _
+A A b _ _ _
+C C b f g e
+D D b f g e
+_ _ _ f g e
+
+_ _ _ _ _ _
+_ _ _ _ _ _
+A A _ _ _ _
+C C b f g e
+D D b f g e
+_ _ b f g e
+

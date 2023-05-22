@@ -281,7 +281,8 @@ class RushHour(State):  # main game class
 
     def loadGame(self, level):  # reading the file
         self.carInfos = []  # list of car information
-        filename = "./assets/level/game"+str(self.game.numlevel)+".txt"  # get 2nd file
+        filename = "./assets/level/game{}.txt".format(level)  # get 2nd file
+        # filename = "./assets/level/game"+str(self.game.numlevel)+".txt"  # get 2nd file
         file = open(filename, 'r')  # open it
         lines = file.readlines()  # save the file to a list
 
@@ -295,7 +296,8 @@ class RushHour(State):  # main game class
 
     def loadHint(self, level):  # reading the file
         hints = []  # list of car information
-        filename = "./assets/hint/game"+str(self.game.numlevel)+".txt"  # get 2nd file
+        filename = "./assets/hint/game{}.txt".format(level)  # get 2nd file
+        # filename = "./assets/hint/game"+str(self.game.numlevel)+".txt"  # get 2nd file
         file = open(filename, 'r')  # open it
         lines = file.readlines()  # save the file to a list
 
