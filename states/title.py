@@ -32,7 +32,7 @@ class Title(State):
         startColor = (0,0,0)
 
         # jika mouse menunjuk start, ubah warna ke hijau
-        if width/2-75 <= self.mouse[0] <= width/2+75 and height/2+25 <= self.mouse[1] <= height/2+75:
+        if width/2-75 <= self.mouse[0] <= width/2+75 and height/2-25 <= self.mouse[1] <= height/2+25:
             startColor = (0,200,0)
             pressed = True
         else:
@@ -45,5 +45,8 @@ class Title(State):
             pygame.mouse.set_cursor()
 
         # render the text
-        self.game.draw_text(display, "Traffic Jam Puzzle", (0,0,0), width/2, height/2-100, "head")
-        self.game.draw_text(display, "Start", startColor, width/2, height/2+50, "subhead")
+        self.game.draw_text(display, "Traffic Jam Puzzle", (0,0,0), width/2, height/2-150, "head")
+        self.game.draw_text(display, "Start", startColor, width/2, height/2, "subhead")
+
+        # gambar logo becak
+        display.blit(self.game.becak,[325,400])

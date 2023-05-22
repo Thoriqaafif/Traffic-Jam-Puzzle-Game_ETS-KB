@@ -19,6 +19,7 @@ class Menu(State):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # go to play
                 if width/2-75 <= self.mouse[0] <= width/2+75 and height/2-100 <= self.mouse[1] <= height/2-50:
+                    # jika belum ada level yang dibuat, buat level pertama
                     if(self.game.numlevel == 0):
                         self.game.newLevel()
                     new_state = Level(self.game)

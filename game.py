@@ -23,7 +23,6 @@ class Game():
             self.numlevel=0     #current number of level
             self.load_assets()
             self.load_states()
-            # self.newLevel()
 
         def game_loop(self):
             while self.playing:
@@ -93,8 +92,8 @@ class Game():
             self.font_dir["text"] = os.path.join(self.assets_dir, "font")
             self.font["text"]= pygame.font.Font(os.path.join(self.font_dir["text"], "PressStart2P-vaV7.ttf"), 10)
             self.bg = pygame.image.load("./assets/batik.png")
-            self.car = pygame.image.load("./assets/car.png")
-            self.car = pygame.transform.scale(self.car,(70,100))
+            self.becak = pygame.image.load("./assets/becak.png")
+            self.becak = pygame.transform.scale(self.becak,(150,100))
 
         def load_states(self):
             self.title_screen = Title(self)

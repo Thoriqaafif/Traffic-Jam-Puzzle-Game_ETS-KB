@@ -277,7 +277,7 @@ class RushHour(State):  # main game class
 
     def loadGame(self, level):  # reading the file
         self.carInfos = []  # list of car information
-        filename = "./assets/level/game"+str(self.game.numlevel)+".txt"  # get 2nd file
+        filename = "./assets/level/game"+str(level)+".txt"  # get 2nd file
         file = open(filename, 'r')  # open it
         lines = file.readlines()  # save the file to a list
 
@@ -300,8 +300,9 @@ class RushHour(State):  # main game class
         if self.rectObjects[0].startX == surfaceSize-140:
             messagebox.showinfo(
                 'Congratulations!', 'You have completed the game!\nYou did it in %d moves!' % self.turns)  # victory popup
-            self.game.newLevel()    # buat level baru
+            if(self.level==self.game.numlevel):
+                self.game.newLevel()    # buat level baru
             self.game.back()        # pop state sekarang
             # buat state RushHour level selanjutnya
-            new_state = RushHour(self.game,self.game.numlevel)
+            new_state = RushHour(self.game,self.level+1)
             new_state.enter_state()
