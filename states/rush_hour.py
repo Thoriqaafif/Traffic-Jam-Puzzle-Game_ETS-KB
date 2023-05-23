@@ -16,13 +16,14 @@ miny = (600-surfaceSize)/2+50   # y-coordinates starts of game box
 # each of block is a rectangle block
 class Rectangle:  # rectangle class (the car)
 
-    def __init__(self, orientation, size, row, column):
+    def __init__(self, orientation, size, row, column, kode):
         perSq = 70 #one square is 80x80
         self.startX = column * perSq #starting x-coordinate
         self.startY = row * perSq #starting y-coordinate
         self.orientation = orientation
         self.size = size
         self.becak = False  # flag yang menandakan becak atau tidak
+        self.kode = kode
         
         if self.orientation == "h": #for horizontal cars
             length = perSq * size
@@ -32,7 +33,7 @@ class Rectangle:  # rectangle class (the car)
             self.startLimitX = 0 #Starting x coordinate of where the car can be positioned
             self.startLimitY = self.startY #Starting y coordinate of where the car can be positioned
             self.endLimitX = surfaceSize - length + perSq #Ending x coordinate of where the car can be positioned
-            self.endLimitY = self.startY + self.extendY #Ending x coordinate of where the car can be positioned
+            self.endLimitY = self.startY + self.extendY #Ending y coordinate of where the car can be positioned
             
         else: #same as above, but for vertical, so swap x and y
             length = perSq * size
@@ -66,13 +67,6 @@ class RushHour(State):  # main game class
         self.turns = 0
         self.level=level
         self.path = self.loadHint(level)
-        cnt=0
-        for p in self.path:
-            cnt+=1
-            print(p)
-        print("Jumlah path: ",cnt//7)
-        for line in self.board:
-            print(line)
 
         pygame.init()  # run pygame
 
@@ -91,9 +85,22 @@ class RushHour(State):  # main game class
             # cek apakah pemain menekan back
             if 50 <= self.mouseX <= 150 and 25 <= self.mouseY <= 75:
                 self.game.back()
-            # cek apakah pemain menekan help
+            # cek apakah pemain menekan hint
             elif width-150 <= self.mouseX <= width-50 and 25 <= self.mouseY <= 75:
-                pass
+                count = 0
+                for line in self.path:
+                    print(line)
+                    count += 1
+                print("Jumlah path: {}".format(count // 7))
+                self.turns+=1
+                board=self.game.hint(self.board)
+                if(board == None):
+                    self.rectObjects[0].startX = 280
+                    self.rectObjects[0].startY = 140
+                    self.rectObjects[0].rect = pygame.Rect(280, 140, self.rectObjects[0].extendX, self.rectObjects[0].extendY)
+                else:
+                    self.board = board
+                    self.convertBoard()
             # cek apakah pemain menggerakkan blok
             else:
                 self.clickObject()
@@ -281,36 +288,29 @@ class RushHour(State):  # main game class
                 #this semi-monster if statement checks whether the new proposed coordinates of the rectangle is within the limits or not
                 #and also checks for collision
                 if (self.rectObjects[x].startLimitX <= jumpX < self.rectObjects[x].endLimitX) and (self.rectObjects[x].startLimitY <= jumpY < self.rectObjects[x].endLimitY) and moveAllowed:
-                    # row0=self.rectObjects[x].startY//perSq
-                    # col0=self.rectObjects[x].startX//perSq
-                    # row=jumpY//perSq
-                    # col=jumpX//perSq
-                    # kode = self.board[row0][col0]
-                    # # jika horizontal
-                    # if row0==row:
-                    #     # bergerak ke kanan
-                    #     if col>col0:
-                    #         for idx in range(col-col0):
-                    #             self.board[row][col0+idx]='_'
-                    #             self.board[row][col+idx]=kode
-                    #     # bergerak ke kiri
-                    #     else:
-                    #         for idx in range(col0-col):
-                    #             self.board[row][col0-idx]='_'
-                    #             self.board[row][col-idx]=kode
+                    row0=self.rectObjects[x].startY//perSq
+                    col0=self.rectObjects[x].startX//perSq
+                    row=jumpY//perSq
+                    col=jumpX//perSq
+                    size=self.rectObjects[x].size
+                    kode = self.board[row0][col0]
+                    # jika horizontal
+                    if row0==row and col0 != col:
+                        for idx in range(size):
+                            self.board[row][col0+idx]='_'
+                        for idx in range(size):
+                            self.board[row][col+idx]=kode
 
                     # jika vertikal
-                    if col0==col:
-                        # bergerak ke bawah
-                        if row>row0:
-                            for idx in range(row-row0):
-                                self.board[row0+idx][col]='_'
-                                self.board[row+idx][col]=kode
-                        # bergerak ke atas
-                        else:
-                            for idx in range(row0-row):
-                                self.board[row0-idx][col]='_'
-                                self.board[row-idx][col]=kode
+                    if col0==col and row0 != row:
+                        for idx in range(size):
+                            self.board[row0+idx][col]='_'
+                        for idx in range(size):
+                            self.board[row+idx][col]=kode
+                            
+                    # print('')
+                    # for line in self.board:
+                    #     print(line)
 
                     #update the necessary attributes of the rectangle
                     self.rectObjects[x].rect = pygame.Rect(jumpX, jumpY, self.rectObjects[x].extendX, self.rectObjects[x].extendY)
@@ -349,9 +349,11 @@ class RushHour(State):  # main game class
             row = int(carInfo[2])
             col = int(carInfo[3])
             if orientation == 'h':
+                kode = chr(ord('A')+i) # memberi kode
                 for j in range(size):
                     self.board[row][col+j]=kode
             elif orientation == 'v':
+                kode = chr(ord('b')+i) # memberi kode
                 for j in range(size):
                     self.board[row+j][col]=kode
             self.carInfos.append(carInfo)
@@ -375,8 +377,24 @@ class RushHour(State):  # main game class
     def makeRectangles(self):  # make rectangle objects
         self.rectObjects = []  # list of rectangle objects
         for each in self.carInfos:  # make obejcts
+            row = int(each[2])
+            col = int(each[3])
+            kode = self.board[row][col]
             self.rectObjects.append(
-                Rectangle(each[0], int(each[1]), int(each[2]), int(each[3])))
+                Rectangle(each[0], int(each[1]), row, col,kode))
+            
+    def convertBoard(self):
+        finish = set()
+        for i in range(6):
+            for j in range(6):
+                kode = self.board[i][j]
+                for obj in self.rectObjects:
+                    if(obj.kode == kode and kode not in finish):
+                        # print("huee")
+                        obj.rect = pygame.Rect(70*j, 70*i, obj.extendX, obj.extendY)
+                        # obj.rect.startX=70*j
+                        # obj.rect.startY=70*i
+                finish.add(kode)
 
     def gameOver(self):  # if game is won
         # checks if starting coordinate of first car is at the winning position or not

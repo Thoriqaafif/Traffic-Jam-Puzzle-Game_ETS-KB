@@ -120,11 +120,13 @@ class Game():
             self.numlevel += 1
             Generate(self.numlevel)
 
-        def search(board):
-            Generate.search(board)
-
-        def tes(self,board):
-            Generate.board_str(board)
+        def hint(self,board):
+            path = Generate.search(board)
+            # return path[1]
+            if(path != [board]):
+                return path[1]
+            else:
+                return None
 
 N = 6
 EMPTY_SPACE = '_'
