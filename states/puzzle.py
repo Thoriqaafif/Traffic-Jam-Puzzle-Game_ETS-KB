@@ -1,6 +1,7 @@
 import pygame
 import math
 from tkinter import messagebox
+from states.rush_hour import Rectangle
 
 class game: #main class
 

@@ -87,11 +87,11 @@ class RushHour(State):  # main game class
                 self.game.back()
             # cek apakah pemain menekan hint
             elif width-150 <= self.mouseX <= width-50 and 25 <= self.mouseY <= 75:
-                count = 0
-                for line in self.path:
-                    print(line)
-                    count += 1
-                print("Jumlah path: {}".format(count // 7))
+                # count = 0
+                # for line in self.path:
+                #     print(line)
+                #     count += 1
+                # print("Jumlah path: {}".format(count // 7))
                 self.turns+=1
                 board=self.game.hint(self.board)
                 if(board == None):
@@ -384,17 +384,20 @@ class RushHour(State):  # main game class
                 Rectangle(each[0], int(each[1]), row, col,kode))
             
     def convertBoard(self):
-        finish = set()
-        for i in range(6):
-            for j in range(6):
-                kode = self.board[i][j]
-                for obj in self.rectObjects:
-                    if(obj.kode == kode and kode not in finish):
-                        # print("huee")
-                        obj.rect = pygame.Rect(70*j, 70*i, obj.extendX, obj.extendY)
-                        # obj.rect.startX=70*j
-                        # obj.rect.startY=70*i
-                finish.add(kode)
+            finish = set()
+            for i in range(6):
+                for j in range(6):
+                    kode = self.board[i][j]
+                    for obj in self.rectObjects:
+                        if(obj.kode == kode and kode not in finish):
+                            # print("huee")
+                            obj.rect = pygame.Rect(70*j, 70*i, obj.extendX, obj.extendY)
+                            obj.currentX = 70*j
+                            obj.currentY = 70*i
+                            obj.startX = 70*j
+                            obj.startY = 70*i
+                            obj.rectDrag = False
+                    finish.add(kode)
 
     def gameOver(self):  # if game is won
         # checks if starting coordinate of first car is at the winning position or not

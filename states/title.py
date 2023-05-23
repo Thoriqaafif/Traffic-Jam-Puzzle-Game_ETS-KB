@@ -45,7 +45,7 @@ class Title(State):
             pygame.mouse.set_cursor()
 
         # render the text
-        self.game.draw_text(display, "Becak Terjebak", (0,0,0), width/2, height/2-125, "head")
+        self.game.draw_text(display, "Delman Terjebak", (0,0,0), width/2, height/2-125, "head")
         self.game.draw_text(display, "Start", startColor, width/2, height/2, "subhead")
 
         # gambar logo becak

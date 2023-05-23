@@ -59,21 +59,3 @@ class Level(State):
         else:
             pygame.mouse.set_cursor()
             
-
-        # if self.padding-25 <= self.mouse[0] <= self.padding+25 and self.padding-25 <= self.mouse[1] <= self.padding+25:
-        #     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-        #     self.game.draw_text(display, "1", (0,200,0), self.padding, self.padding, "head")
-        # else:
-        #     pygame.mouse.set_cursor()
-        #     self.game.draw_text(display, "1", (0,0,0), self.padding, self.padding, "head")
-
-        # if self.padding+self.margin-25 <= self.mouse[0] <= self.padding+self.margin+25 and self.padding-25 <= self.mouse[1] <= self.padding+25:
-        #     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-        #     self.game.draw_text(display, "2", (0,200,0), self.padding+self.margin, self.padding, "head")
-        # else:
-        #     pygame.mouse.set_cursor()
-        #     self.game.draw_text(display, "2", (0,0,0), self.padding+self.margin, self.padding, "head")
-
-        # self.game.draw_text(display, "3", (0,0,0), self.padding+2*self.margin, self.padding, "head")
-        # self.game.draw_text(display, "4", (0,0,0), self.padding+3*self.margin, self.padding, "head")
-        # self.game.draw_text(display, "5", (0,0,0), self.padding+4*self.margin, self.padding, "head")
