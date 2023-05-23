@@ -13,7 +13,7 @@ class Game():
             self.screen = pygame.display.set_mode((self.SCREEN_WIDTH,self.SCREEN_HEIGHT))
             # set icon and caption
             pygame.display.set_caption("Traffic Jam Puzzle")
-            icon=pygame.image.load("assets/icon.png")
+            icon=pygame.image.load("assets/img/icon.png")
             pygame.display.set_icon(icon)
             self.running, self.playing = True, True
             # self.actions = {"left": False, "right": False, "up" : False, "down" : False, "action1" : False, "action2" : False, "start" : False}
@@ -91,9 +91,22 @@ class Game():
             self.font["subhead"]= pygame.font.Font(os.path.join(self.font_dir["subhead"], "PressStart2P-vaV7.ttf"), 30)
             self.font_dir["text"] = os.path.join(self.assets_dir, "font")
             self.font["text"]= pygame.font.Font(os.path.join(self.font_dir["text"], "PressStart2P-vaV7.ttf"), 10)
-            self.bg = pygame.image.load("./assets/batik.png")
-            self.becak = pygame.image.load("./assets/becak.png")
-            self.becak = pygame.transform.scale(self.becak,(150,100))
+            self.bg = pygame.image.load("./assets/img/batik1.png")
+            # tanah tempat becak dan mobil
+            self.tanah = pygame.image.load("./assets/img/tanah.png")
+            self.tanah = pygame.transform.scale(self.tanah,(70,70))
+            # becak
+            self.becak = pygame.image.load("./assets/img/delman.png")
+            self.becak = pygame.transform.scale(self.becak,(105,70))
+            self.becaklogo = pygame.transform.scale(self.becak,(150,100))
+            # mobil ukuran 3
+            self.car1 = pygame.image.load("./assets/img/car1.png")
+            self.car1H = pygame.transform.scale(self.car1,(200,70))
+            self.car1V = pygame.transform.rotate(self.car1H, 90)
+            # mobil ukuran 2
+            self.car2 = pygame.image.load("./assets/img/car2.png")
+            self.car2H = pygame.transform.scale(self.car2,(140,70))
+            self.car2V = pygame.transform.rotate(self.car2H, 90)
 
         def load_states(self):
             self.title_screen = Title(self)
@@ -128,6 +141,7 @@ class Generate():
             self.get_board()
             self.path=Generate.search(self.board)
         self.make_level_txt(level)
+        self.make_hint_txt(level)
 
     def get_board(self):
         # Uppercase is horizontal, lowercase is vertical.
@@ -232,9 +246,6 @@ class Generate():
 
         return next_states
 
-
-
-
     def search(board):
         queue = [(0, [board])]
         board_hash_set = set()
@@ -291,3 +302,14 @@ class Generate():
         for i in blocks:
             out.write('{}, {}, {}, {}\n'.format(i[0], i[1], i[2], i[3]))
             print(i)
+
+    # membuat hint dan memasukkan ke file txt
+    def make_hint_txt(self, level):
+        file_path = "./assets/hint/game{}.txt".format(level)
+        
+        with open(file_path, 'w') as file:
+            for board in self.path:
+                for row in board:
+                    row_str = ' '.join(['_' if cell == 0 else str(cell) for cell in row])
+                    file.write(row_str + '\n')
+                file.write('\n')  # Add an empty line between matrices    

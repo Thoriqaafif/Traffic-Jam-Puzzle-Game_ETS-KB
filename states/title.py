@@ -18,7 +18,7 @@ class Title(State):
                 self.game.stop()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # jika mouse menekan start, pindah ke menu
-                if width/2-75 <= self.mouse[0] <= width/2+75 and height/2+25 <= self.mouse[1] <= height/2+75:
+                if width/2-75 <= self.mouse[0] <= width/2+75 and height/2-25 <= self.mouse[1] <= height/2+25:
                     new_state = Menu(self.game)
                     new_state.enter_state()
 
@@ -45,8 +45,8 @@ class Title(State):
             pygame.mouse.set_cursor()
 
         # render the text
-        self.game.draw_text(display, "Traffic Jam Puzzle", (0,0,0), width/2, height/2-150, "head")
+        self.game.draw_text(display, "Becak Terjebak", (0,0,0), width/2, height/2-125, "head")
         self.game.draw_text(display, "Start", startColor, width/2, height/2, "subhead")
 
         # gambar logo becak
-        display.blit(self.game.becak,[325,400])
+        display.blit(self.game.becaklogo,[325,375])

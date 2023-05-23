@@ -22,6 +22,7 @@ class Rectangle:  # rectangle class (the car)
         self.startY = row * perSq #starting y-coordinate
         self.orientation = orientation
         self.size = size
+        self.becak = False  # flag yang menandakan becak atau tidak
         
         if self.orientation == "h": #for horizontal cars
             length = perSq * size
@@ -44,6 +45,7 @@ class Rectangle:  # rectangle class (the car)
             self.endLimitY = surfaceSize - length + perSq
 
         if row == 2 and orientation == 'h': #if it is the first car (car needed to get across)
+            self.becak=True
             self.colour = (204, 0, 0) #make it its own different colour to differentiate
 
         self.currentX = self.startX + 0 #current x-coordinate of car
@@ -63,18 +65,18 @@ class RushHour(State):  # main game class
         self.makeRectangles()
         self.turns = 0
         self.level=level
-        # surfaceSize = 480     # square size
-        # self.x = (960-surfaceSize)/2
-        # self.y = (540-surfaceSize)/2
+        self.path = self.loadHint(level)
+        cnt=0
+        for p in self.path:
+            cnt+=1
+            print(p)
+        print("Jumlah path: ",cnt//7)
+        for line in self.board:
+            print(line)
 
         pygame.init()  # run pygame
-        # surface = pygame.display.set_mode(
-        #     (surfaceSize, surfaceSize))  # make display window
 
-        self.start = True  # if it is beginning of program
-        #create popup
-        # messagebox.showinfo('Welcome!', 'Rush Hour\nGet the red car to the end.\n Click and drag to control the cars.')
-        self.inGame = True  # loop condition
+        self.start = True
 
     def get_events(self):
         self.ev = pygame.event.poll()  # pygame events
@@ -119,19 +121,38 @@ class RushHour(State):  # main game class
         self.mouse = pygame.mouse.get_pos()
 
         # menggambar kotak tempat permainan
-        pygame.draw.rect(surface,white,pygame.Rect(minx,miny,surfaceSize,surfaceSize))
+        for i in range(6):
+            for j in range(6):
+                surface.blit(self.game.tanah,[minx+j*70,miny+i*70])
+        # pygame.draw.rect(surface,white,pygame.Rect(minx,miny,surfaceSize,surfaceSize))
         for x in range(len(self.rectObjects)):  # for each rectangle
                 # surface.blit(self.game.car,[self.rectObjects[x].rect.x,self.rectObjects[x].rect.y])
                 # colour fill the rectangles
                 startX = self.rectObjects[x].rect.x+minx
                 startY = self.rectObjects[x].rect.y+miny
+                orientation = self.rectObjects[x].orientation
+                size = self.rectObjects[x].size
                 w = self.rectObjects[x].rect.width
                 h = self.rectObjects[x].rect.height
-                surface.fill(
-                    self.rectObjects[x].colour, pygame.Rect(startX,startY,w,h))
-                # draw rectangles, with black borders
-                pygame.draw.rect(surface, (0, 0, 0),
-                                 pygame.Rect(startX,startY,w,h), 5)
+                # jika blok utama, gambar becak
+                if self.rectObjects[x].becak:
+                    surface.blit(self.game.becak,[startX+20, startY])
+                # jika blok ukuran 2, gambar car2
+                elif size==2:
+                    if orientation == 'h':
+                        surface.blit(self.game.car2H,[startX, startY])
+                    else:
+                        surface.blit(self.game.car2V,[startX, startY])
+                    # surface.fill(self.rectObjects[x].colour, pygame.Rect(startX,startY,w,h))
+                    # draw rectangles, with black borders
+                    # pygame.draw.rect(surface, (0, 0, 0),
+                    #              pygame.Rect(startX,startY,w,h), 5)
+                # jika blok ukuran 3, gambar car1
+                elif size==3:
+                    if orientation == 'h':
+                        surface.blit(self.game.car1H,[startX+5, startY])
+                    else:
+                        surface.blit(self.game.car1V,[startX, startY+5])
                 
         pressed = False
         backColor = (0,0,0)
@@ -260,6 +281,37 @@ class RushHour(State):  # main game class
                 #this semi-monster if statement checks whether the new proposed coordinates of the rectangle is within the limits or not
                 #and also checks for collision
                 if (self.rectObjects[x].startLimitX <= jumpX < self.rectObjects[x].endLimitX) and (self.rectObjects[x].startLimitY <= jumpY < self.rectObjects[x].endLimitY) and moveAllowed:
+                    # row0=self.rectObjects[x].startY//perSq
+                    # col0=self.rectObjects[x].startX//perSq
+                    # row=jumpY//perSq
+                    # col=jumpX//perSq
+                    # kode = self.board[row0][col0]
+                    # # jika horizontal
+                    # if row0==row:
+                    #     # bergerak ke kanan
+                    #     if col>col0:
+                    #         for idx in range(col-col0):
+                    #             self.board[row][col0+idx]='_'
+                    #             self.board[row][col+idx]=kode
+                    #     # bergerak ke kiri
+                    #     else:
+                    #         for idx in range(col0-col):
+                    #             self.board[row][col0-idx]='_'
+                    #             self.board[row][col-idx]=kode
+
+                    # jika vertikal
+                    if col0==col:
+                        # bergerak ke bawah
+                        if row>row0:
+                            for idx in range(row-row0):
+                                self.board[row0+idx][col]='_'
+                                self.board[row+idx][col]=kode
+                        # bergerak ke atas
+                        else:
+                            for idx in range(row0-row):
+                                self.board[row0-idx][col]='_'
+                                self.board[row-idx][col]=kode
+
                     #update the necessary attributes of the rectangle
                     self.rectObjects[x].rect = pygame.Rect(jumpX, jumpY, self.rectObjects[x].extendX, self.rectObjects[x].extendY)
                     self.rectObjects[x].currentX = jumpX
@@ -267,7 +319,7 @@ class RushHour(State):  # main game class
                     self.rectObjects[x].startX = jumpX
                     self.rectObjects[x].startY = jumpY
                     self.rectObjects[x].rectDrag = False
-                    self.turns += 1
+                    self.turns += 1 
 
                 else: #if it doesnt match
                     #put the rectangle back to where the user moved it from
@@ -280,6 +332,36 @@ class RushHour(State):  # main game class
         filename = "./assets/level/game"+str(level)+".txt"  # get 2nd file
         file = open(filename, 'r')  # open it
         lines = file.readlines()  # save the file to a list
+        self.board = [['_'] * 6 for _ in range(6)]  # membuat papan permainan
+
+        for x in range(len(lines)):
+            # for each line, get rid of the \n that appears at the end
+            lines[x] = lines[x][:-1]
+
+        i=0
+        for line in lines:
+            # memberi kode untuk tiap objek
+            kode = chr(ord('A')+i)
+            # seperate each data to its own string and add to list
+            carInfo=line.split(',')
+            orientation=carInfo[0]
+            size = int(carInfo[1])
+            row = int(carInfo[2])
+            col = int(carInfo[3])
+            if orientation == 'h':
+                for j in range(size):
+                    self.board[row][col+j]=kode
+            elif orientation == 'v':
+                for j in range(size):
+                    self.board[row+j][col]=kode
+            self.carInfos.append(carInfo)
+            i+=1
+
+    def loadHint(self, level):  # reading the file
+        hints = []  # list of car information
+        filename = "./assets/hint/game"+str(self.game.numlevel)+".txt"  # get 2nd file
+        file = open(filename, 'r')  # open it
+        lines = file.readlines()  # save the file to a list
 
         for x in range(len(lines)):
             # for each line, get rid of the \n that appears at the end
@@ -287,7 +369,8 @@ class RushHour(State):  # main game class
 
         for line in lines:
             # seperate each data to its own string and add to list
-            self.carInfos.append(line.split(', '))
+            hints.append(line)
+        return hints
 
     def makeRectangles(self):  # make rectangle objects
         self.rectObjects = []  # list of rectangle objects
