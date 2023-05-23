@@ -307,7 +307,7 @@ class RushHour(State):  # main game class
                             self.board[row0+idx][col]='_'
                         for idx in range(size):
                             self.board[row+idx][col]=kode
-                            
+                    
                     # print('')
                     # for line in self.board:
                     #     print(line)
@@ -392,8 +392,11 @@ class RushHour(State):  # main game class
                     if(obj.kode == kode and kode not in finish):
                         # print("huee")
                         obj.rect = pygame.Rect(70*j, 70*i, obj.extendX, obj.extendY)
-                        # obj.rect.startX=70*j
-                        # obj.rect.startY=70*i
+                        obj.currentX = 70*j
+                        obj.currentY = 70*i
+                        obj.startX = 70*j
+                        obj.startY = 70*i
+                        obj.rectDrag = False
                 finish.add(kode)
 
     def gameOver(self):  # if game is won
