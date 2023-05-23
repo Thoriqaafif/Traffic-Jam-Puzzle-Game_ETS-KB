@@ -66,13 +66,13 @@ class RushHour(State):  # main game class
         self.turns = 0
         self.level=level
         self.path = self.loadHint(level)
-        cnt=0
-        for p in self.path:
-            cnt+=1
-            print(p)
-        print("Jumlah path: ",cnt//7)
-        for line in self.board:
-            print(line)
+        # cnt=0
+        # for p in self.path:
+        #     cnt+=1
+        #     print(p)
+        # print("Jumlah path: ",cnt//7)
+        # for line in self.board:
+        #     print(line)
 
         pygame.init()  # run pygame
 
@@ -91,8 +91,14 @@ class RushHour(State):  # main game class
             # cek apakah pemain menekan back
             if 50 <= self.mouseX <= 150 and 25 <= self.mouseY <= 75:
                 self.game.back()
-            # cek apakah pemain menekan help
+            # cek apakah pemain menekan hint
             elif width-150 <= self.mouseX <= width-50 and 25 <= self.mouseY <= 75:
+                count = 0
+                for line in self.path:
+                    print(line)
+                    count += 1
+                print("Jumlah path: {}".format(count // 7))
+                
                 pass
             # cek apakah pemain menggerakkan blok
             else:
@@ -300,17 +306,17 @@ class RushHour(State):  # main game class
                     #             self.board[row][col-idx]=kode
 
                     # jika vertikal
-                    if col0==col:
-                        # bergerak ke bawah
-                        if row>row0:
-                            for idx in range(row-row0):
-                                self.board[row0+idx][col]='_'
-                                self.board[row+idx][col]=kode
-                        # bergerak ke atas
-                        else:
-                            for idx in range(row0-row):
-                                self.board[row0-idx][col]='_'
-                                self.board[row-idx][col]=kode
+                    # if col0==col:
+                    #     # bergerak ke bawah
+                    #     if row>row0:
+                    #         for idx in range(row-row0):
+                    #             self.board[row0+idx][col]='_'
+                    #             self.board[row+idx][col]=kode
+                    #     # bergerak ke atas
+                    #     else:
+                    #         for idx in range(row0-row):
+                    #             self.board[row0-idx][col]='_'
+                    #             self.board[row-idx][col]=kode
 
                     #update the necessary attributes of the rectangle
                     self.rectObjects[x].rect = pygame.Rect(jumpX, jumpY, self.rectObjects[x].extendX, self.rectObjects[x].extendY)
@@ -329,7 +335,7 @@ class RushHour(State):  # main game class
 
     def loadGame(self, level):  # reading the file
         self.carInfos = []  # list of car information
-        filename = "./assets/level/game"+str(level)+".txt"  # get 2nd file
+        filename = "./assets/level/game{}.txt".format(level)  # get 2nd file
         file = open(filename, 'r')  # open it
         lines = file.readlines()  # save the file to a list
         self.board = [['_'] * 6 for _ in range(6)]  # membuat papan permainan
@@ -359,7 +365,7 @@ class RushHour(State):  # main game class
 
     def loadHint(self, level):  # reading the file
         hints = []  # list of car information
-        filename = "./assets/hint/game"+str(self.game.numlevel)+".txt"  # get 2nd file
+        filename = "./assets/hint/game{}.txt".format(level)  # get 2nd file
         file = open(filename, 'r')  # open it
         lines = file.readlines()  # save the file to a list
 

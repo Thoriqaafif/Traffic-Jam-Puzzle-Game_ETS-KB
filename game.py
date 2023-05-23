@@ -301,7 +301,7 @@ class Generate():
         out = open(strout, 'w')
         for i in blocks:
             out.write('{}, {}, {}, {}\n'.format(i[0], i[1], i[2], i[3]))
-            print(i)
+            # print(i)
 
     # membuat hint dan memasukkan ke file txt
     def make_hint_txt(self, level):
