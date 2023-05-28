@@ -1,4 +1,6 @@
-# imports libraries
+# state menu game
+# berisi level, tombol back
+# tombol hint, dan papan permainan
 import pygame
 import random
 import sys
@@ -7,108 +9,109 @@ from tkinter import *
 from tkinter import messagebox
 from states.state import State
 
-Tk().wm_withdraw()  # to hide the main Tkinter window
-
 surfaceSize = 420               # game surface size
 minx = (800-surfaceSize)/2      # x-coordinates starts of game box
 miny = (600-surfaceSize)/2+50   # y-coordinates starts of game box
 
-# each of block is a rectangle block
-class Rectangle:  # rectangle class (the car)
-
+# tiap objek dianggap persegi panjang
+# untuk menentukan posisi, orientasi, kode, dan ukurannya
+class Rectangle:
     def __init__(self, orientation, size, row, column, kode):
-        perSq = 70 #one square is 80x80
-        self.startX = column * perSq #starting x-coordinate
-        self.startY = row * perSq #starting y-coordinate
-        self.orientation = orientation
-        self.size = size
-        self.becak = False  # flag yang menandakan becak atau tidak
-        self.kode = kode
+        perSq = 70      # tiap kotak berukuran 70x70
+        self.startX = column * perSq    # koordinat x awal
+        self.startY = row * perSq       # koordinat y awal
+        self.orientation = orientation  # arah gerak objek
+        self.size = size                # ukuran objek
+        self.becak = False              # flag yang menandakan becak atau tidak
+        self.kode = kode                # kode objek pada matriks
         
-        if self.orientation == "h": #for horizontal cars
-            length = perSq * size
-            self.extendX = length #How much the x-coordinate extends by
-            self.extendY = perSq #How much the y-coordinate extends by
-            self.colour = (0, 255, 0)
-            self.startLimitX = 0 #Starting x coordinate of where the car can be positioned
-            self.startLimitY = self.startY #Starting y coordinate of where the car can be positioned
-            self.endLimitX = surfaceSize - length + perSq #Ending x coordinate of where the car can be positioned
-            self.endLimitY = self.startY + self.extendY #Ending y coordinate of where the car can be positioned
+        if self.orientation == "h": # untuk objel horizontal
+            length = perSq * size       # panjang objek
+            self.extendX = length       # besar objek memanjang secara horizontal
+            self.extendY = perSq        # besar objek memanjang secara vertikal
+            self.startLimitX = 0        # koordinat x awal dimana objek dapat diletakkan
+            self.startLimitY = self.startY # koordinat y awal dimana objek dapat diletakkan
+            self.endLimitX = surfaceSize - length + perSq # koordinat x akhir dimana objek dapat diletakkan
+            self.endLimitY = self.startY + self.extendY # koordinat y akhir dimana objek dapat diletakkan
             
-        else: #same as above, but for vertical, so swap x and y
-            length = perSq * size
-            self.extendX = perSq
-            self.extendY = length
-            self.colour = (0, 0, 255)
-            self.startLimitX = self.startX
-            self.startLimitY = 0
-            self.endLimitX = self.startX + self.extendX
-            self.endLimitY = surfaceSize - length + perSq
+        else: # untuk objek vertikal
+            length = perSq * size       # panjang objek
+            self.extendX = perSq        # besar objek memanjang secara horizontal
+            self.extendY = length       # besar objek memanjang secara vertikal
+            self.startLimitX = self.startX  # koordinat x awal dimana objek dapat diletakkan
+            self.startLimitY = 0        # koordinat y awal dimana objek dapat diletakkan
+            self.endLimitX = self.startX + self.extendX # koordinat x akhir dimana objek dapat diletakkan
+            self.endLimitY = surfaceSize - length + perSq # koordinat y akhir dimana objek dapat diletakkan
 
+        # jika objek berada pada baris 2
+        # dan berarah horizontal
+        # maka objek adalah becak
         if row == 2 and orientation == 'h': #if it is the first car (car needed to get across)
             self.becak=True
-            self.colour = (204, 0, 0) #make it its own different colour to differentiate
 
-        self.currentX = self.startX + 0 #current x-coordinate of car
-        self.currentY = self.startY + 0 #current y-coordinate of car
+        self.currentX = self.startX + 0 # koordinat x objek saat ini
+        self.currentY = self.startY + 0 # koordinat y objek saat ini
 
-        self.rectDrag = False #boolean if the car is currently being dragged or not
-        self.rect = pygame.Rect(self.startX, self.startY, self.extendX, self.extendY) #make rectangle object
+        self.rectDrag = False # flag yang menandakan apakah objek sedang dipindahkan
+        self.rect = pygame.Rect(self.startX, self.startY, self.extendX, self.extendY) # buat object rectangle
 
-
-class RushHour(State):  # main game class
+# kelas utama untuk menjalankan puzzle
+class RushHour(State):
 
     def __init__(self,game,level):
         State.__init__(self,game)
 
-        # self.board=translateLevel()
+        # load puzzle dari file txt
         self.loadGame(level)
         self.makeRectangles()
         self.turns = 0
         self.level=level
+
+        # load hint dari file txt
         self.path = self.loadHint(level)
 
         pygame.init()  # run pygame
 
-        self.start = True
+        self.start = True   # flag yang menunjukkan game baru dimulai
 
     def get_events(self):
-        self.ev = pygame.event.poll()  # pygame events
+        self.ev = pygame.event.poll()
         width = self.game.SCREEN_WIDTH
         height = self.game.SCREEN_HEIGHT
 
+        # jika pemain ingin keluar, panggil method quit
         if self.ev.type == pygame.QUIT:  # if window exited
             self.game.stop()
 
-        elif self.ev.type == pygame.MOUSEBUTTONDOWN:  # if the window has been left-clicked
+        elif self.ev.type == pygame.MOUSEBUTTONDOWN: # jika pemain menekan cursor
             self.mouseX, self.mouseY = self.ev.pos
             # cek apakah pemain menekan back
             if 50 <= self.mouseX <= 150 and 25 <= self.mouseY <= 75:
                 self.game.back()
             # cek apakah pemain menekan hint
             elif width-150 <= self.mouseX <= width-50 and 25 <= self.mouseY <= 75:
-                count = 0
-                for line in self.path:
-                    print(line)
-                    count += 1
-                print("Jumlah path: {}".format(count // 7))
-                self.turns+=1
+                # panggil method hint
                 board=self.game.hint(self.board)
+                # jika tidak ada langkah selanjutnya, game telah selesai
                 if(board == None):
                     self.rectObjects[0].startX = 280
                     self.rectObjects[0].startY = 140
                     self.rectObjects[0].rect = pygame.Rect(280, 140, self.rectObjects[0].extendX, self.rectObjects[0].extendY)
+                # ubah board sekarang dengan board yang didapat dari hint
+                # evaluasi objek rect nya sesuai dengan board baru
                 else:
                     self.board = board
                     self.convertBoard()
+                
+                self.turns+=1   # tambah turns permainan
             # cek apakah pemain menggerakkan blok
             else:
                 self.clickObject()
 
-        elif self.ev.type == pygame.MOUSEBUTTONUP:  # if the window has been released from the left-click
+        elif self.ev.type == pygame.MOUSEBUTTONUP:  # jika pemain melepas kursor
             self.unclickObject()
 
-        elif self.ev.type == pygame.MOUSEMOTION:  # if the lect click is still being clicked
+        elif self.ev.type == pygame.MOUSEMOTION:  # jika pemain menggerakkan mouse
             self.objectMidAir()
 
         # jika pemain baru masuk, beri pesan pembuka
@@ -120,8 +123,7 @@ class RushHour(State):  # main game class
         self.gameOver()
 
     def render(self, surface):
-        # surface.fill((255, 0, 255))
-        surface.blit(self.game.bg,[0,0])
+        surface.blit(self.game.bg,[0,0])    # beri background
         width = self.game.SCREEN_WIDTH
         height = self.game.SCREEN_HEIGHT
         white=(250,250,250)
@@ -131,10 +133,7 @@ class RushHour(State):  # main game class
         for i in range(6):
             for j in range(6):
                 surface.blit(self.game.tanah,[minx+j*70,miny+i*70])
-        # pygame.draw.rect(surface,white,pygame.Rect(minx,miny,surfaceSize,surfaceSize))
-        for x in range(len(self.rectObjects)):  # for each rectangle
-                # surface.blit(self.game.car,[self.rectObjects[x].rect.x,self.rectObjects[x].rect.y])
-                # colour fill the rectangles
+        for x in range(len(self.rectObjects)):  # untuk tiap objek
                 startX = self.rectObjects[x].rect.x+minx
                 startY = self.rectObjects[x].rect.y+miny
                 orientation = self.rectObjects[x].orientation
@@ -150,10 +149,6 @@ class RushHour(State):  # main game class
                         surface.blit(self.game.car2H,[startX, startY])
                     else:
                         surface.blit(self.game.car2V,[startX, startY])
-                    # surface.fill(self.rectObjects[x].colour, pygame.Rect(startX,startY,w,h))
-                    # draw rectangles, with black borders
-                    # pygame.draw.rect(surface, (0, 0, 0),
-                    #              pygame.Rect(startX,startY,w,h), 5)
                 # jika blok ukuran 3, gambar car1
                 elif size==3:
                     if orientation == 'h':
@@ -161,9 +156,9 @@ class RushHour(State):  # main game class
                     else:
                         surface.blit(self.game.car1V,[startX, startY+5])
                 
-        pressed = False
-        backColor = (0,0,0)
-        hintColor = (0,0,0)
+        pressed = False     # flag penanda terdapat tombol yang ditunjuk mouse
+        backColor = (0,0,0) # warna tombol back
+        hintColor = (0,0,0) # warna tombol hint
 
         # kursor berada di tombol back
         if 50 <= self.mouse[0] <= 150 and 25 <= self.mouse[1] <= 75:
@@ -180,46 +175,48 @@ class RushHour(State):  # main game class
         else:
             pygame.mouse.set_cursor()
 
+        # gambar tiap tombol dan text
         self.game.draw_text(surface, "back", backColor, 100, 50, "subhead")
         self.game.draw_text(surface, str(self.level), (0,0,0), width/2, 50, "head")
         self.game.draw_text(surface, "hint", hintColor, width - 100, 50, "subhead")
 
-    def clickObject(self):  # when the window is clicked
-        for x in range(len(self.rectObjects)):  # for every object
+    def clickObject(self):  # ketika pemain mengeklik papan permainan
+        for x in range(len(self.rectObjects)):  # untuk tiap objek
             startX = self.rectObjects[x].rect.x+minx
             startY = self.rectObjects[x].rect.y+miny
             w = self.rectObjects[x].rect.width
             h = self.rectObjects[x].rect.height
             objectRect=pygame.Rect(startX,startY,w,h)
-            # if the coordinates of the click is within a rectangle
+
+            # jika koordinat yang diklik terdapat objek
             if objectRect.collidepoint(self.ev.pos):
-                self.rectObjects[x].rectDrag = True  # make it be in the air
-                self.mouseX, self.mouseY = self.ev.pos  # get current mouse position
-                # get different between mouse and rectangle coordinates
+                self.rectObjects[x].rectDrag = True  # buat objek di udara
+                self.mouseX, self.mouseY = self.ev.pos  # mendapat posisi mouse saat ini
+                # mendapat selisih koordinat mouse dengan objek
                 self.offsetX = self.rectObjects[x].rect.x - self.mouseX
                 self.offsetY = self.rectObjects[x].rect.y - self.mouseY
                 break  # stop the loop
 
-    def objectMidAir(self):  # when the rectangle is being held (in air)
-        for x in range(len(self.rectObjects)):  # for each rectangle
-            if self.rectObjects[x].rectDrag:  # if the rectangle is in the air
-                self.mouseX, self.mouseY = self.ev.pos  # get mouse position
+    def objectMidAir(self):  # ketika objek sedang ditarik
+        for x in range(len(self.rectObjects)):  # untuk tiap objek
+            if self.rectObjects[x].rectDrag:  # jika objek berada di udara
+                self.mouseX, self.mouseY = self.ev.pos  # mendapat posisi mouse saat ini
                 self.rectObjects[x].rect.x = self.mouseX + \
-                    self.offsetX  # get midair rectangle coordinates
+                    self.offsetX  # mendapat koordinat objek di udara
                 self.rectObjects[x].rect.y = self.mouseY + self.offsetY
 
-    def unclickObject(self):  # when the rectangle is let go
-        for x in range(len(self.rectObjects)): #for each rectangle
-            if self.rectObjects[x].rectDrag: #if the rectangle is in the air
+    def unclickObject(self):  # ketika objek diletakkan
+        for x in range(len(self.rectObjects)): # untuk tiap objek
+            if self.rectObjects[x].rectDrag: # jika objek berada di udara
 
-                perSq = 70 #one square is 80x80
-                #get the 'row and column' of where the rectangle is
+                perSq = 70 # satu kotak berukuran 70x70
+                # dapatkan baris dan kolom objek
                 makeshiftColumn, makeshiftRow = self.rectObjects[x].rect.x / perSq, self.rectObjects[x].rect.y / perSq
                 decimalColumn, decimalRow = makeshiftColumn % 1, makeshiftRow % 1
 
-                #depending on decimal part, whether to round up or round down
-                #math.ceil will get rid of decimal part and round up
-                #math.floor will get rid of decimal part and round down
+                # melakukan pembulatan berdasarkan nilai desimalnya
+                # jika desimal lebih dari sama dengan 0.5 lakukan pembulatan ke atas
+                # jika desimal kurang dari 0.5 lakukan pembulatan ke bawah
                 if decimalColumn >= 0.5:
                     jumpX = math.ceil(makeshiftColumn) * perSq
                 else:
@@ -228,53 +225,48 @@ class RushHour(State):  # main game class
                     jumpY = math.ceil(makeshiftRow) * perSq
                 else:
                     jumpY = math.floor(makeshiftRow) * perSq
-                #jump is the proposed coordinate following multiples of 80
-                #say the midair x-coordinate is something like 146, the jumpX will be 160
 
-                #make a temporary list without the rectangle being held for rectangle comparison
+                # buat list sementara tanpa objek yang dipindah sebagai perbandingan
                 temporaryRectangles = self.rectObjects * 1
                 temporaryRectangles.remove(self.rectObjects[x])
 
-                #get the coordinates in the middle of the rectangle
+                # mendapat koordinat tengah objek
                 middleY = (self.rectObjects[x].startY + self.rectObjects[x].extendY + self.rectObjects[x].startY) / 2
                 middleX = (self.rectObjects[x].startX + self.rectObjects[x].extendX + self.rectObjects[x].startX) / 2
-                moveAllowed = True #boolean for allowing the move
+                moveAllowed = True # flag yang menandakan pergerakan dibolehkan
 
+                # mendapat kotak awal dan akhir untuk mengecek collision
                 if self.rectObjects[x].orientation == "h":
-                    countStart = int(self.rectObjects[x].currentX /perSq) #get the starting square that is needed to be checked for collisions
-                    countEnd = int(jumpX / perSq) #get the last square that is needed to be checked for collision
-                    if countStart > countEnd: #if start is bigger then swap
-                        countStart, countEnd = countEnd, countStart
-                    
-                else: #same but just for vertical, swap X and Y
+                    countStart = int(self.rectObjects[x].currentX /perSq) 
+                    countEnd = int(jumpX / perSq) 
+                    if countStart > countEnd: # jika awal lebih besar, maka tukar
+                        countStart, countEnd = countEnd, countStart    
+                else: # untuk vertikal, tukar X dan Y
                     countStart = int(self.rectObjects[x].currentY /perSq)
                     countEnd = int(jumpY / perSq)
-                    if countStart > countEnd:
+                    if countStart > countEnd: # jika awal lebih besar, maka tukar
                         countStart, countEnd = countEnd, countStart
 
-                #depending on size of car, where to check for collision
-                #okay i kind of lied about it being the 'middle', because for size 3 car
-                #it would check 1/3 and 2/3 of the rectangle
+                # bergantung ukuran objek dimana kita harus mengecek collision
                 if self.rectObjects[x].size == 2:
                     divisor = 2
-
                 else:
                     divisor = 3
                 
 
-                for y in range(len(temporaryRectangles)): #for each rectangle
-                    for z in range(countStart, countEnd+1): #for each square between the move
+                for y in range(len(temporaryRectangles)): # untuk tiap objek
+                    for z in range(countStart, countEnd+1): # untuk tiap objek yang ada pada pergerakan
                         if self.rectObjects[x].orientation == "h":
-                            middleX = ((z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor #get the new middle coordinate
-                            middleX2 = (((z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor) * (divisor-1) #for size 3 cars
-                            #this monster if statement checks whether or not the 'middle' coordinate is between the coordinates of another rectangle or not
+                            middleX = ((z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor # mendapat nilai tengah baru
+                            middleX2 = (((z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor) * (divisor-1) # untuk objek ukuran 3
+                            # mengecek apakah koordinat 'middle' berada di antara objek lain
                             if ((temporaryRectangles[y].startX <= middleX <= (temporaryRectangles[y].extendX + temporaryRectangles[y].startX)) or (temporaryRectangles[y].startX <= middleX2 <= (temporaryRectangles[y].extendX + temporaryRectangles[y].startX))) and (temporaryRectangles[y].startY <= middleY <= (temporaryRectangles[y].extendY + temporaryRectangles[y].startY)):
                                 moveAllowed = False
-                                #if there is a collision then it cannot move
+                                # jika terdapat collision, maka pergerakan dibatalkan
                                 break
                             else:
                                 moveAllowed = True
-                        else: #for vertical, same as above, just swap X and Y                            
+                        else: # untuk bertikal, tukar x dan y                          
                             middleY = ((z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor
                             middleY2 = (((z*perSq) + (((z+1)*perSq)+(((self.rectObjects[x].size-1)*perSq)))) / divisor) * (divisor-1)
                             if (temporaryRectangles[y].startX <= middleX <= (temporaryRectangles[y].extendX + temporaryRectangles[y].startX)) and ((temporaryRectangles[y].startY <= middleY <= (temporaryRectangles[y].extendY + temporaryRectangles[y].startY)) or (temporaryRectangles[y].startY <= middleY2 <= (temporaryRectangles[y].extendY + temporaryRectangles[y].startY))):
@@ -285,8 +277,8 @@ class RushHour(State):  # main game class
                                 
                     if moveAllowed == False:
                             break
-                #this semi-monster if statement checks whether the new proposed coordinates of the rectangle is within the limits or not
-                #and also checks for collision
+                    
+                # cek apakah koordinat baru berada pada limit atau tidak
                 if (self.rectObjects[x].startLimitX <= jumpX < self.rectObjects[x].endLimitX) and (self.rectObjects[x].startLimitY <= jumpY < self.rectObjects[x].endLimitY) and moveAllowed:
                     row0=self.rectObjects[x].startY//perSq
                     col0=self.rectObjects[x].startX//perSq
@@ -294,25 +286,20 @@ class RushHour(State):  # main game class
                     col=jumpX//perSq
                     size=self.rectObjects[x].size
                     kode = self.board[row0][col0]
-                    # jika horizontal
+                    # jika horizontal, update kolom sebelahnya
                     if row0==row and col0 != col:
                         for idx in range(size):
                             self.board[row][col0+idx]='_'
                         for idx in range(size):
                             self.board[row][col+idx]=kode
-
-                    # jika vertikal
+                    # jika vertikal, update baris sebelahnya
                     if col0==col and row0 != row:
                         for idx in range(size):
                             self.board[row0+idx][col]='_'
                         for idx in range(size):
                             self.board[row+idx][col]=kode
-                    
-                    # print('')
-                    # for line in self.board:
-                    #     print(line)
 
-                    #update the necessary attributes of the rectangle
+                    # update atribut yang dibutuhkan
                     self.rectObjects[x].rect = pygame.Rect(jumpX, jumpY, self.rectObjects[x].extendX, self.rectObjects[x].extendY)
                     self.rectObjects[x].currentX = jumpX
                     self.rectObjects[x].currentY = jumpY
@@ -321,28 +308,31 @@ class RushHour(State):  # main game class
                     self.rectObjects[x].rectDrag = False
                     self.turns += 1 
 
-                else: #if it doesnt match
-                    #put the rectangle back to where the user moved it from
+                # jika tidak sesuai, pergerakan dibatalkan
+                # kemabilkan objek ke lokasi semula
+                # beri pesan error
+                else: 
                     self.rectObjects[x].rect = pygame.Rect(self.rectObjects[x].currentX, self.rectObjects[x].currentY, self.rectObjects[x].extendX, self.rectObjects[x].extendY)
                     self.rectObjects[x].rectDrag = False
-                    messagebox.showwarning('Error','You cannot make that move.') #error message popup
+                    messagebox.showwarning('Error','You cannot make that move.')
 
-    def loadGame(self, level):  # reading the file
-        self.carInfos = []  # list of car information
-        filename = "./assets/level/game"+str(level)+".txt"  # get 2nd file
-        file = open(filename, 'r')  # open it
-        lines = file.readlines()  # save the file to a list
+    # method untuk membaca level dari file txt
+    def loadGame(self, level):
+        self.carInfos = []  # list informasi objek
+        filename = "./assets/level/game"+str(level)+".txt"
+        file = open(filename, 'r')  # buka file
+        lines = file.readlines()
         self.board = [['_'] * 6 for _ in range(6)]  # membuat papan permainan
 
         for x in range(len(lines)):
-            # for each line, get rid of the \n that appears at the end
+            # untuk tiap baris, hapus newline
             lines[x] = lines[x][:-1]
 
         i=0
         for line in lines:
             # memberi kode untuk tiap objek
             kode = chr(ord('A')+i)
-            # seperate each data to its own string and add to list
+            # memasukkan tiap data ke tiap variabel
             carInfo=line.split(',')
             orientation=carInfo[0]
             size = int(carInfo[1])
@@ -359,30 +349,33 @@ class RushHour(State):  # main game class
             self.carInfos.append(carInfo)
             i+=1
 
-    def loadHint(self, level):  # reading the file
-        hints = []  # list of car information
-        filename = "./assets/hint/game"+str(self.game.numlevel)+".txt"  # get 2nd file
-        file = open(filename, 'r')  # open it
-        lines = file.readlines()  # save the file to a list
+    # method untuk membaca hint dari file txt
+    def loadHint(self, level):  # membaca file
+        hints = []  # list informasi objek
+        filename = "./assets/hint/game"+str(self.game.numlevel)+".txt"
+        file = open(filename, 'r')  # buka file
+        lines = file.readlines() 
 
         for x in range(len(lines)):
-            # for each line, get rid of the \n that appears at the end
+            # untuk tiap baris, hapus newline
             lines[x] = lines[x][:-1]
 
         for line in lines:
-            # seperate each data to its own string and add to list
+            # memasukkan data pada list hints
             hints.append(line)
         return hints
 
-    def makeRectangles(self):  # make rectangle objects
-        self.rectObjects = []  # list of rectangle objects
-        for each in self.carInfos:  # make obejcts
+    # method untuk membuat objek rectangle
+    def makeRectangles(self):
+        self.rectObjects = []
+        for each in self.carInfos:
             row = int(each[2])
             col = int(each[3])
             kode = self.board[row][col]
             self.rectObjects.append(
                 Rectangle(each[0], int(each[1]), row, col,kode))
-            
+    
+    # method untuk mengevaluasi tiap objek dengan board
     def convertBoard(self):
         finish = set()
         for i in range(6):
@@ -390,7 +383,6 @@ class RushHour(State):  # main game class
                 kode = self.board[i][j]
                 for obj in self.rectObjects:
                     if(obj.kode == kode and kode not in finish):
-                        # print("huee")
                         obj.rect = pygame.Rect(70*j, 70*i, obj.extendX, obj.extendY)
                         obj.currentX = 70*j
                         obj.currentY = 70*i
@@ -399,11 +391,14 @@ class RushHour(State):  # main game class
                         obj.rectDrag = False
                 finish.add(kode)
 
-    def gameOver(self):  # if game is won
-        # checks if starting coordinate of first car is at the winning position or not
+    # cek apakah game telah diselesaikan
+    def gameOver(self):
+        # game dimenangkan jika objek utama berada di kolom ke-4
+        # atau koordinat berada pada (panjang papan - 2 kotak (140))
         if self.rectObjects[0].startX == surfaceSize-140:
+            # beri pesan kemenangan dengan jumlah moves yang dilakukan
             messagebox.showinfo(
-                'Congratulations!', 'You have completed the game!\nYou did it in %d moves!' % self.turns)  # victory popup
+                'Congratulations!', 'You have completed the game!\nYou did it in %d moves!' % self.turns) 
             if(self.level==self.game.numlevel):
                 self.game.newLevel()    # buat level baru
             self.game.back()        # pop state sekarang

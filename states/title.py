@@ -1,3 +1,5 @@
+# state awal ketika bermain
+# berisi judul, tombol play, dan logo
 import pygame
 from states.state import State
 from states.menu import Menu
@@ -13,7 +15,7 @@ class Title(State):
         height = self.game.SCREEN_HEIGHT
         self.mouse = pygame.mouse.get_pos()
         for event in pygame.event.get():
-            # jika user melakukan quit game, stop game
+            # jika user melakukan quit game, panggil method stop
             if event.type == pygame.QUIT:
                 self.game.stop()
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -23,15 +25,14 @@ class Title(State):
                     new_state.enter_state()
 
     def render(self, display):
-        # display.fill((255,0,255))
-        display.blit(self.game.bg,[0,0])
+        display.blit(self.game.bg,[0,0])    # masukkan background
         width = self.game.SCREEN_WIDTH
         height = self.game.SCREEN_HEIGHT
         self.mouse = pygame.mouse.get_pos()
-        pressed = False
-        startColor = (0,0,0)
+        pressed = False         # flag penanda apakah ada tombol yang ditunjuk mouse
+        startColor = (0,0,0)    # warna tombol start
 
-        # jika mouse menunjuk start, ubah warna ke hijau
+        # jika mouse menunjuk start, ubah warna tombol ke hijau
         if width/2-75 <= self.mouse[0] <= width/2+75 and height/2-25 <= self.mouse[1] <= height/2+25:
             startColor = (0,200,0)
             pressed = True

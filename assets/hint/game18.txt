@@ -1,0 +1,112 @@
+_ _ F F F e
+_ _ _ _ d e
+A A c _ d e
+_ _ c _ d _
+_ _ b _ G G
+_ _ b _ _ _
+
+_ _ F F F _
+_ _ _ _ d e
+A A c _ d e
+_ _ c _ d e
+_ _ b _ G G
+_ _ b _ _ _
+
+_ _ _ F F F
+_ _ _ _ d e
+A A c _ d e
+_ _ c _ d e
+_ _ b _ G G
+_ _ b _ _ _
+
+_ _ _ F F F
+_ _ c _ d e
+A A c _ d e
+_ _ _ _ d e
+_ _ b _ G G
+_ _ b _ _ _
+
+_ _ c F F F
+_ _ c _ d e
+A A _ _ d e
+_ _ _ _ d e
+_ _ b _ G G
+_ _ b _ _ _
+
+_ _ c F F F
+_ _ c _ d e
+A A _ _ d e
+_ _ b _ d e
+_ _ b _ G G
+_ _ _ _ _ _
+
+_ _ c F F F
+_ _ c _ d e
+A A b _ d e
+_ _ b _ d e
+_ _ _ _ G G
+_ _ _ _ _ _
+
+_ _ c F F F
+_ _ c _ d e
+A A b _ d e
+_ _ b _ d e
+_ _ _ G G _
+_ _ _ _ _ _
+
+_ _ c F F F
+_ _ c _ d _
+A A b _ d e
+_ _ b _ d e
+_ _ _ G G e
+_ _ _ _ _ _
+
+_ _ c F F F
+_ _ c _ d _
+A A b _ d _
+_ _ b _ d e
+_ _ _ G G e
+_ _ _ _ _ e
+
+_ _ c F F F
+_ _ c _ d _
+A A b _ d _
+_ _ b _ d e
+_ _ G G _ e
+_ _ _ _ _ e
+
+_ _ c F F F
+_ _ c _ _ _
+A A b _ d _
+_ _ b _ d e
+_ _ G G d e
+_ _ _ _ _ e
+
+_ _ c F F F
+_ _ c _ _ _
+A A b _ _ _
+_ _ b _ d e
+_ _ G G d e
+_ _ _ _ d e
+
+_ _ c F F F
+_ _ c _ _ _
+A A b _ _ _
+_ _ b _ d e
+_ G G _ d e
+_ _ _ _ d e
+
+_ _ c F F F
+_ _ c _ _ _
+A A b _ _ _
+_ _ b _ d e
+G G _ _ d e
+_ _ _ _ d e
+
+_ _ c F F F
+_ _ c _ _ _
+A A _ _ _ _
+_ _ b _ d e
+G G b _ d e
+_ _ _ _ d e
+
